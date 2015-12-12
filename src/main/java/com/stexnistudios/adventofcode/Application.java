@@ -10,20 +10,28 @@ public class Application {
     public static void main(String[] args) throws IOException {
         Logger logger = LoggerFactory.getLogger(Application.class);
 
-        int day = Integer.parseInt(args[0]);
+        int day = 0;
+        if (args.length > 0) {
+            day = Integer.parseInt(args[0]);
+        }
         String dayStr = Strings.padStart(String.valueOf(day), 2, '0');
-
-        logger.info("Running solver for day {}", dayStr);
-
         Solver solver = null;
+        String fileName = "day" + dayStr + ".txt";
 
         switch (day) {
             case 1:
-                solver = new Day01Solver(dayStr);
+                solver = new Day01Solver(fileName);
+                break;
+            case 2:
+                solver = new Day02Solver(fileName);
+                break;
+            default:
+                logger.info("No solver found for day {}", dayStr);
                 break;
         }
 
-        if(solver != null) {
+        if (solver != null) {
+            logger.info("Running solver for day {}", dayStr);
             solver.run();
         }
     }

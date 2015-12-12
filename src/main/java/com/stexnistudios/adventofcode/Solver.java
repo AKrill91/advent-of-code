@@ -33,7 +33,7 @@ public abstract class Solver implements Runnable {
                 new InputStreamReader(
                     Thread.currentThread()
                         .getContextClassLoader()
-                        .getResourceAsStream("day01.txt")
+                        .getResourceAsStream(fileName)
                 )
             )
         ) {
