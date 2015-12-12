@@ -24,8 +24,7 @@ public abstract class Solver implements Runnable {
         this(loadInputFromFile(fileName));
     }
 
-    private static List<String> loadInputFromFile(String fileName) throws IOException {
-        Logger logger = LoggerFactory.getLogger(Solver.class);
+    protected static List<String> loadInputFromFile(String fileName) throws IOException {
         List<String> lines = new ArrayList<>();
 
         try (
