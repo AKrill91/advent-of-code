@@ -14,8 +14,9 @@ public class Application {
         if (args.length > 0) {
             day = Integer.parseInt(args[0]);
         }
+
         String dayStr = Strings.padStart(String.valueOf(day), 2, '0');
-        Solver solver = null;
+        Runnable solver = null;
         String fileName = "day" + dayStr + ".txt";
 
         switch (day) {
@@ -24,6 +25,12 @@ public class Application {
                 break;
             case 2:
                 solver = new Day02Solver(fileName);
+                break;
+            case 3:
+                solver = new MultiSolver(
+                    new Day03Solver(fileName),
+                    new Day03Solver(fileName, 2)
+                );
                 break;
             default:
                 logger.info("No solver found for day {}", dayStr);
