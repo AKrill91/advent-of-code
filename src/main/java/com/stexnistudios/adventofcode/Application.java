@@ -35,6 +35,9 @@ public class Application {
             case 6:
                 solver = new Day06Solver(fileName);
                 break;
+            case 7:
+                solver = new Day07Solver(fileName);
+                break;
             default:
                 logger.info("No solver found for day {}", dayStr);
                 break;
