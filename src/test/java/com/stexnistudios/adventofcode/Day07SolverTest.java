@@ -1,6 +1,5 @@
 package com.stexnistudios.adventofcode;
 
-import com.stexnistudios.adventofcode.gate.IGate;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -17,11 +16,11 @@ public class Day07SolverTest {
         List<String> input = Arrays.asList(
             (
                 "123 -> x\n" +
+                    "y RSHIFT 2 -> g\n" +
                     "456 -> y\n" +
-                    "x AND y -> d\n" +
+                    "123 AND y -> d\n" +
                     "x OR y -> e\n" +
                     "x LSHIFT 2 -> f\n" +
-                    "y RSHIFT 2 -> g\n" +
                     "NOT x -> h\n" +
                     "NOT y -> i"
             ).split("\n")
@@ -41,13 +40,11 @@ public class Day07SolverTest {
 
         solver.run();
 
-        Map<String, IGate> wires = solver.getWires();
+        Map<String, Character> wires = solver.getWires();
 
-        ids.forEach(id -> {
-            assertTrue("Has wire " + id, wires.containsKey(id));
-        });
+        ids.forEach(id -> assertTrue("Has wire " + id, wires.containsKey(id)));
 
-        assertEquals(72, wires.get("d").getValue());
-        assertEquals(65079, wires.get("i").getValue());
+        assertEquals(72, wires.get("d").charValue());
+        assertEquals(65079, wires.get("i").charValue());
     }
 }
