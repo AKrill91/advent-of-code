@@ -40,13 +40,13 @@ public class Day07SolverTest {
 
         solver.run();
 
-        Map<String, Short> wires = solver.getWires();
+        Map<String, Day07Solver.IGate> wires = solver.getWires();
 
         ids.forEach(id -> {
             assertTrue("Has wire " + id, wires.containsKey(id));
         });
 
-        assertEquals(72, wires.get("d").shortValue());
-        assertEquals(65079, wires.get("i").shortValue());
+        assertEquals(72, wires.get("d").getValue());
+        assertEquals(65079, wires.get("i").getValue());
     }
 }
