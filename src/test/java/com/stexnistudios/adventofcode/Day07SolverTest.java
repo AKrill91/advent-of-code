@@ -1,5 +1,6 @@
 package com.stexnistudios.adventofcode;
 
+import com.stexnistudios.adventofcode.gate.IGate;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class Day07SolverTest {
 
         solver.run();
 
-        Map<String, Day07Solver.IGate> wires = solver.getWires();
+        Map<String, IGate> wires = solver.getWires();
 
         ids.forEach(id -> {
             assertTrue("Has wire " + id, wires.containsKey(id));

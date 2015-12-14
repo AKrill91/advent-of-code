@@ -1,53 +1,13 @@
 package com.stexnistudios.adventofcode;
 
+import com.stexnistudios.adventofcode.gate.IGate;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Day07Solver extends Solver {
-
-    public interface IGate {
-        short getValue();
-    }
-
-    private static class ValueGate implements IGate {
-        short value;
-
-        public ValueGate(short value) {
-            this.value = value;
-        }
-
-        @Override
-        public short getValue() {
-            return value;
-        }
-    }
-
-    private abstract class UnaryGate implements IGate {
-        protected String input;
-
-        public UnaryGate(String input) {
-            this.input = input;
-        }
-
-        public String getInput() {
-            return input;
-        }
-    }
-
-    private abstract class BinaryGate extends UnaryGate {
-        protected String input2;
-
-        public BinaryGate(String input1, String input2) {
-            super(input1);
-            this.input2 = input2;
-        }
-
-        public String getInput2() {
-            return input2;
-        }
-    }
 
     private Map<String, IGate> wires;
 
