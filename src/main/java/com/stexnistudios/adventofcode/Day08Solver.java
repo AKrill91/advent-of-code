@@ -6,8 +6,9 @@ import java.util.List;
 
 public class Day08Solver extends Solver {
 
-    private int codeCount = 0;
-    private int literalCount = 0;
+    private int codeCount;
+    private int literalCount;
+    private int encodedCount;
 
     public Day08Solver(List<String> input) {
         super(input);
@@ -22,37 +23,72 @@ public class Day08Solver extends Solver {
         input.stream()
             .forEach(this::analyzeString);
 
-        logger.info("Code Length: {}, Literal length: {}, Diff: {}", codeCount, literalCount, codeCount - literalCount);
+        logger.info(
+            "Code Length: {}, Literal length: {}, Diff: {}",
+            codeCount,
+            literalCount,
+            codeCount - literalCount
+        );
+
+        logger.info(
+            "Code Length: {}, Encoded Length: {}, Diff: {}",
+            codeCount,
+            encodedCount,
+            encodedCount - codeCount
+        );
     }
 
     private void analyzeString(String str) {
         codeCount += str.length();
         StringBuilder literal = new StringBuilder();
+        StringBuilder encoded = new StringBuilder("\"");
 
         boolean inEscaped = false;
-        String asciiSequence = "";
+        String hexSequence = "";
 
-        for (char ch : Arrays.copyOfRange(str.toCharArray(), 1, str.length() - 1)) {
-            if (inEscaped) {
-                if(ch == '"' || ch == '\\') {
-                    literal.append(ch);
-                    inEscaped = false;
-                } else if (ch != 'x') {
-                    asciiSequence += ch;
-                    if(asciiSequence.length() == 2) {
-                        literal.append((char)Integer.parseInt(asciiSequence, 16));
-                        asciiSequence = "";
-                        inEscaped = false;
-                    }
+        for(int i = 0; i < str.length(); ++i) {
+            char c = str.charAt(i);
+
+            if(c == '"') {
+                if(i != 0 && i != str.length() -1) {
+                    literal.append(c);
                 }
-            } else if(ch == '\\') {
-                inEscaped = true;
+                encoded.append('\\');
+                if(inEscaped) {
+                    inEscaped = false;
+                }
+            } else if (c == '\\') {
+                if(inEscaped) {
+                    literal.append(c);
+                }
+                inEscaped = !inEscaped;
+                encoded.append(c);
+            } else if (c == 'x') {
+                if(!inEscaped) {
+                    literal.append(c);
+                } else {
+                    hexSequence = str.charAt(++i) + "" + str.charAt(++i);
+                    literal.append(
+                        (char) Integer.parseInt(hexSequence, 16)
+                    );
+                    inEscaped = false;
+                }
             } else {
-                literal.append(ch);
+                literal.append(c);
+            }
+
+            encoded.append(c);
+
+            if(!hexSequence.equals("")) {
+                encoded.append(hexSequence);
+                hexSequence = "";
             }
         }
 
+        encoded.append('"');
+
         literalCount += literal.length();
+        encodedCount += encoded.length();
     }
 
     public int getCodeCount() {
@@ -61,5 +97,9 @@ public class Day08Solver extends Solver {
 
     public int getLiteralCount() {
         return literalCount;
+    }
+
+    public int getEncodedCount() {
+        return encodedCount;
     }
 }

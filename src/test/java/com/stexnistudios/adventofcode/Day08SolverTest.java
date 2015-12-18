@@ -20,6 +20,7 @@ public class Day08SolverTest {
 
         assertEquals(2, solver.getCodeCount());
         assertEquals(0, solver.getLiteralCount());
+        assertEquals(6, solver.getEncodedCount());
     }
 
     @Test
@@ -32,6 +33,7 @@ public class Day08SolverTest {
 
         assertEquals(10, solver.getCodeCount());
         assertEquals(7, solver.getLiteralCount());
+        assertEquals(16, solver.getEncodedCount());
     }
 
     @Test
@@ -44,5 +46,6 @@ public class Day08SolverTest {
 
         assertEquals(6, solver.getCodeCount());
         assertEquals(1, solver.getLiteralCount());
+        assertEquals(11, solver.getEncodedCount());
     }
 }
