@@ -117,6 +117,15 @@ public class Day13Solver extends Solver {
             people.add(right);
             happinessMap.put(new Arrangement(left, right), amount);
         });
+
+        String you = "You";
+
+        people.forEach(person -> {
+            happinessMap.put(new Arrangement(person, you), 0);
+            happinessMap.put(new Arrangement(you, person), 0);
+        });
+
+        people.add(you);
     }
 
     public int getMinHappiness() {
