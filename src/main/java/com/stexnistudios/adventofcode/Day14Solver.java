@@ -21,7 +21,7 @@ public class Day14Solver extends Solver {
         private int time;
         private boolean isResting;
 
-
+        private int points;
 
         public Reindeer(String name, int velocity, int duration, int rest) {
             this.name = name;
@@ -31,6 +31,7 @@ public class Day14Solver extends Solver {
             distance = 0;
             time = 0;
             isResting = false;
+            points = 0;
         }
 
         public void tick() {
@@ -51,6 +52,14 @@ public class Day14Solver extends Solver {
 
         public int getDistance() {
             return distance;
+        }
+
+        public int getPoints() {
+            return points;
+        }
+
+        public void givePoint() {
+            ++points;
         }
     }
 
@@ -74,22 +83,48 @@ public class Day14Solver extends Solver {
         IntStream.range(0, 2503)
             .forEach(num -> {
                 reindeers.forEach(Reindeer::tick);
+                int maxDistance = reindeers.stream()
+                    .mapToInt(Reindeer::getDistance)
+                    .max()
+                    .getAsInt();
+
+                reindeers.stream()
+                    .filter(reindeer -> reindeer.getDistance() == maxDistance)
+                    .findFirst()
+                    .get()
+                    .givePoint();
             });
 
-        maxDistance = reindeers.stream()
+        int maxDistance = reindeers.stream()
             .mapToInt(Reindeer::getDistance)
             .max()
             .getAsInt();
 
-        Reindeer fastest = reindeers.stream()
+        int maxPoints = reindeers.stream()
+            .mapToInt(Reindeer::getPoints)
+            .max()
+            .getAsInt();
+
+        Reindeer winner = reindeers.stream()
+            .filter(reindeer -> reindeer.getPoints() == maxPoints)
+            .findFirst()
+            .get();
+
+        Reindeer farthest = reindeers.stream()
             .filter(reindeer -> reindeer.getDistance() == maxDistance)
             .findFirst()
             .get();
 
         logger.info(
-            "The fastest reindeer is {} who went {} km.",
-            fastest.name,
-            fastest.getDistance()
+            "The reindeer with the most points is {} with {}.",
+            winner.name,
+            winner.getPoints()
+        );
+
+        logger.info(
+            "The reindeer that went the farthest is {} with a distance of {} km.",
+            farthest.name,
+            farthest.getDistance()
         );
     }
 
