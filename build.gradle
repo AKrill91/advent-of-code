@@ -22,17 +22,6 @@ dependencies {
 
 run {
     if (project.hasProperty('args')) {
-        def temp = project.args.findAll(/((-[A-Za-z]|-{2}\w+)([=|\s]('.*?'|".*?"|\w+))?)/)
-        args = temp.collect {
-            def output = it
-            def equals = it.indexOf("=")
-            if (equals != -1) {
-                if (it.charAt(equals + 1) == "\"" || it.charAt(equals + 1) == "'") {
-                    output = it.substring(0, equals + 1) + it.substring(equals + 2, it.length() - 1)
-                }
-            }
-
-            return output
-        }
+        args = [project.args]
     }
 }

@@ -1,5 +1,7 @@
 package com.stexnistudios.adventofcode.util;
 
+import java.util.Objects;
+
 public class Point {
     private final int x;
     private final int y;
@@ -23,6 +25,24 @@ public class Point {
 
     public Point add(Point other) {
         return new Point(getX() + other.getX(), getY() + other.getY());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Point point = (Point) o;
+        return getX() == point.getX() &&
+            getY() == point.getY();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getX(), getY());
     }
 
     @Override

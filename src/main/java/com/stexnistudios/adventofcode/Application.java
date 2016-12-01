@@ -3,22 +3,40 @@ package com.stexnistudios.adventofcode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.Scanner;
 
 public class Application implements Runnable {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
+        Logger logger = LoggerFactory.getLogger(Application.class);
+
+        if (args.length == 0) {
+            logger.error("No day argument provided");
+            System.exit(1);
+        }
+
+        String day = args[0];
+
         InputStream inStream = Application.class
             .getResourceAsStream(
-                "/day01.txt"
+                "/day" + day + ".txt"
             );
 
         String input = new Scanner(inStream).useDelimiter("\\A").next();
 
-        Solver solver = new Day01Solver(input);
+        String className = "com.stexnistudios.adventofcode.Day" + day + "Solver";
 
-        new Application(solver).run();
+        Class<?> solverClass = Class.forName(className);
+        Constructor<?> constructor = solverClass.getConstructor(String.class);
+        Object instance = constructor.newInstance(input);
+
+        if (!(instance instanceof Solver)) {
+            logger.error("Class is not an instance of solver");
+            System.exit(2);
+        }
+
+        new Application((Solver) instance).run();
     }
 
     private final Solver solver;
