@@ -20,7 +20,7 @@ public class Application implements Runnable {
 
         InputStream inStream = Application.class
             .getResourceAsStream(
-                "/day" + day + ".txt"
+                "/day" + day.substring(0, day.length() - 1) + ".txt"
             );
 
         String input = new Scanner(inStream).useDelimiter("\\A").next();

@@ -3,6 +3,9 @@ package com.stexnistudios.adventofcode.util;
 import java.util.Objects;
 
 public class Point {
+
+    public static final Point ZERO = new Point(0, 0);
+
     private final int x;
     private final int y;
 
