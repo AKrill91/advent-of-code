@@ -12,7 +12,7 @@ public class Day01aSolver extends Day01Solver {
     }
 
     @Override
-    public Object call() throws Exception {
+    public Point call() throws Exception {
         logger.info("I've got {} instructions", instructions.size());
         Point position = new Point();
         int direction = 1;
