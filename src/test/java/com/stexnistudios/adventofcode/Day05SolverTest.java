@@ -9,4 +9,10 @@ public class Day05SolverTest {
         Day05aSolver solver = new Day05aSolver("abc");
         Assert.assertEquals("18f47a30", solver.call());
     }
+
+    @Test
+    public void testB() throws Exception {
+        Day05bSolver solver = new Day05bSolver("abc");
+        Assert.assertEquals("05ace8e3", solver.call());
+    }
 }
