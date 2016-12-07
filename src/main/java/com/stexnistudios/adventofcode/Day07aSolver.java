@@ -1,0 +1,57 @@
+package com.stexnistudios.adventofcode;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Day07aSolver extends Solver {
+    public Day07aSolver(String input) {
+        super(input);
+    }
+
+    @Override
+    public Integer call() throws Exception {
+        List<String> inputs = Arrays.asList(getInput().split("\n"));
+        int validCount = 0;
+
+        for (String input : inputs) {
+            if (isInputValid(input)) {
+                ++validCount;
+            }
+        }
+
+        return validCount;
+    }
+
+    private boolean isInputValid(String input) {
+        boolean found = false;
+        boolean inBracket = false;
+        for (int i = 1; i < input.length() - 2; ++i) {
+            char second = input.charAt(i);
+            if(second == '[') {
+                inBracket = true;
+                continue;
+            } else if(second == ']') {
+                inBracket = false;
+                continue;
+            }
+
+            char first = input.charAt(i - 1);
+            if(first == second) {
+                continue;
+            }
+            char third = input.charAt(i + 1);
+            char fourth = input.charAt(i + 2);
+
+            if (first == fourth && second == third) {
+                if(inBracket) {
+                    found = false;
+                    break;
+                } else  {
+                    found = true;
+                }
+            }
+        }
+
+        return found;
+    }
+}
