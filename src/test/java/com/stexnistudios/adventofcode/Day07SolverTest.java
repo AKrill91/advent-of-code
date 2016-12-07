@@ -3,11 +3,9 @@ package com.stexnistudios.adventofcode;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-public class Day07aSolverTest {
+public class Day07SolverTest {
     @Test
-    public void testA() throws Exception {
+    public void testA() {
         String input = "abba[mnop]qrst\n" +
             "abcd[bddb]xyyx\n" +
             "aaaa[qwer]tyui\n" +
@@ -16,5 +14,16 @@ public class Day07aSolverTest {
         Day07aSolver solver = new Day07aSolver(input);
 
         Assert.assertEquals(2, solver.call().intValue());
+    }
+
+    @Test
+    public void testB() {
+        String input = "aba[bab]xyz\n" +
+            "xyx[xyx]xyx\n" +
+            "aaa[kek]eke\n" +
+            "zazbz[bzb]cdb";
+
+        Day07bSolver solver = new Day07bSolver(input);
+        Assert.assertEquals(3, solver.call().intValue());
     }
 }

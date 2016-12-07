@@ -3,26 +3,12 @@ package com.stexnistudios.adventofcode;
 import java.util.Arrays;
 import java.util.List;
 
-public class Day07aSolver extends Solver {
+public class Day07aSolver extends Day07Solver {
     public Day07aSolver(String input) {
         super(input);
     }
 
-    @Override
-    public Integer call() throws Exception {
-        List<String> inputs = Arrays.asList(getInput().split("\n"));
-        int validCount = 0;
-
-        for (String input : inputs) {
-            if (isInputValid(input)) {
-                ++validCount;
-            }
-        }
-
-        return validCount;
-    }
-
-    private boolean isInputValid(String input) {
+    protected boolean isInputValid(String input) {
         boolean found = false;
         boolean inBracket = false;
         for (int i = 1; i < input.length() - 2; ++i) {
