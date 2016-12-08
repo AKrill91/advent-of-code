@@ -24,6 +24,8 @@ public class Day08aSolver extends Solver {
 
         instructions.forEach(this::handleInstruction);
 
+        logger.info(gridToString());
+
         int activeCount = 0;
         for (int y = 0; y < grid.length; ++y) {
             for (int x = 0; x < grid[y].length; ++x) {
@@ -104,7 +106,7 @@ public class Day08aSolver extends Solver {
             }
         }
 
-        for(int y = 0; y < columnLen; ++y) {
+        for (int y = 0; y < columnLen; ++y) {
             grid[y][column] = newColumn[y];
         }
 
