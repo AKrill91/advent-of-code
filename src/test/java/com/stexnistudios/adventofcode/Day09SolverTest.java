@@ -1,5 +1,7 @@
 package com.stexnistudios.adventofcode;
 
+import com.stexnistudios.adventofcode.day09.Day09aSolver;
+import com.stexnistudios.adventofcode.day09.Day09bSolver;
 import org.javatuples.Pair;
 import org.junit.Assert;
 import org.junit.Test;

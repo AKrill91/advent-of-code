@@ -1,5 +1,6 @@
 package com.stexnistudios.adventofcode;
 
+import com.stexnistudios.adventofcode.day08.Day08aSolver;
 import org.junit.Assert;
 import org.junit.Test;
 

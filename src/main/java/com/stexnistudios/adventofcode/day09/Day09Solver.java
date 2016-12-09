@@ -1,5 +1,6 @@
-package com.stexnistudios.adventofcode;
+package com.stexnistudios.adventofcode.day09;
 
+import com.stexnistudios.adventofcode.Solver;
 import org.javatuples.Pair;
 
 import java.util.regex.Matcher;
