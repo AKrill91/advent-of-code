@@ -1,4 +1,6 @@
-package com.stexnistudios.adventofcode;
+package com.stexnistudios.adventofcode.day05;
+
+import com.stexnistudios.adventofcode.Solver;
 
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;

@@ -1,23 +1,23 @@
-package com.stexnistudios.adventofcode;
+package com.stexnistudios.adventofcode.day04;
 
+import com.stexnistudios.adventofcode.Solver;
+
+import java.text.StringCharacterIterator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Day04bSolver extends Solver {
-    public Day04bSolver(String input) {
+public class Day04aSolver extends Solver {
+    public Day04aSolver(String input) {
         super(input);
     }
 
     @Override
-    public Map<Integer, String> call() {
+    public Integer call() {
         String[] lines = getInput().split("\n");
         int sectionIdSum = 0;
-
-        Map<Integer, String> validRooms = new HashMap<>();
-        Map<Integer, String> decryptedRooms = new HashMap<>();
 
         for (String line : lines) {
             Map<Character, Integer> characterCounts = new HashMap<>();
@@ -56,33 +56,12 @@ public class Day04bSolver extends Solver {
                 }
             }
 
-            if (isValidChecksum(checksum, characterCounts)) {
-                validRooms.put(Integer.parseInt(sectionId), line);
+            if(isValidChecksum(checksum, characterCounts)) {
+                sectionIdSum += Integer.parseInt(sectionId);
             }
         }
 
-        for (Map.Entry<Integer, String> room : validRooms.entrySet()) {
-            String decrypted = "";
-            for (char c : room.getValue().toCharArray()) {
-                if (c == '-') {
-                    decrypted += ' ';
-                } else if (Character.isDigit(c)) {
-                    break;
-                } else {
-                    int temp = c - 97;
-                    temp += room.getKey();
-                    decrypted += (char) (97 + (temp % 26));
-                }
-            }
-            decryptedRooms.put(room.getKey(), decrypted);
-        }
-
-        return decryptedRooms.entrySet()
-            .stream()
-            .filter(entry -> entry.getValue().contains("north"))
-            .collect(
-                Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)
-            );
+        return sectionIdSum;
     }
 
     private boolean isValidChecksum(String checksum, Map<Character, Integer> characterCounts) {
@@ -92,7 +71,7 @@ public class Day04bSolver extends Solver {
                 //Descending
                 int compare = e2.getValue().compareTo(e1.getValue());
 
-                if (compare == 0) {
+                if(compare == 0) {
                     //Ascending
                     compare = e1.getKey().compareTo(e2.getKey());
                 }
@@ -112,7 +91,7 @@ public class Day04bSolver extends Solver {
 
         Iterator<Character> charIter = orderedMap.keySet().iterator();
 
-        for (int i = 0; i < checksum.length() && isValid; ++i) {
+        for(int i = 0; i < checksum.length() && isValid; ++i) {
             isValid = charIter.hasNext() && charIter.next().equals(checksum.charAt(i));
         }
 

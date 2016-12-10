@@ -25,7 +25,12 @@ public class Application implements Runnable {
 
         String input = new Scanner(inStream).useDelimiter("\\A").next();
 
-        String className = "com.stexnistudios.adventofcode.Day" + day + "Solver";
+        String className = String.format(
+            "com.stexnistudios.adventofcode.day%s.Day%sSolver",
+            day,
+            day
+        );
+
 
         Class<?> solverClass = Class.forName(className);
         Constructor<?> constructor = solverClass.getConstructor(String.class);

@@ -1,4 +1,4 @@
-package com.stexnistudios.adventofcode;
+package com.stexnistudios.adventofcode.day02;
 
 import com.stexnistudios.adventofcode.util.Point;
 

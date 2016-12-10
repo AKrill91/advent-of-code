@@ -1,4 +1,6 @@
-package com.stexnistudios.adventofcode;
+package com.stexnistudios.adventofcode.day03;
+
+import com.stexnistudios.adventofcode.Solver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
