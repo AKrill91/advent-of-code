@@ -16,6 +16,7 @@ public class Application implements Runnable {
             System.exit(1);
         }
 
+
         String day = args[0];
 
         InputStream inStream = Application.class
@@ -27,7 +28,7 @@ public class Application implements Runnable {
 
         String className = String.format(
             "com.stexnistudios.adventofcode.day%s.Day%sSolver",
-            day,
+            day.substring(0, day.length() - 1),
             day
         );
 
