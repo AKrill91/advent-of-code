@@ -1,4 +1,4 @@
-package com.stexnistudios.adventofcode;
+package com.stexnistudios.adventofcode.day07;
 
 import org.javatuples.Pair;
 

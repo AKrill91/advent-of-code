@@ -1,7 +1,4 @@
-package com.stexnistudios.adventofcode;
-
-import java.util.Arrays;
-import java.util.List;
+package com.stexnistudios.adventofcode.day07;
 
 public class Day07aSolver extends Day07Solver {
     public Day07aSolver(String input) {
