@@ -40,7 +40,7 @@ public abstract class Day02Solver extends Solver {
     }
 
     protected String getValueAtPosition(Point position) {
-        return grid.get(position.getY()).get(position.getX());
+        return grid.get((int)position.getY()).get((int)position.getX());
     }
 
     protected Point move(Point current, char direction) {
@@ -69,10 +69,10 @@ public abstract class Day02Solver extends Solver {
             return current;
         }
         Point desired = current.add(offset);
-        int desiredX = desired.getX();
-        int desiredY = desired.getY();
-        int actualX = current.getX();
-        int actualY = current.getY();
+        long desiredX = desired.getX();
+        long desiredY = desired.getY();
+        long actualX = current.getX();
+        long actualY = current.getY();
 
         if (isValidX(desiredX) && isValidY(desiredY)) {
             String str = getValueAtPosition(desired);
@@ -85,11 +85,11 @@ public abstract class Day02Solver extends Solver {
         return new Point(actualX, actualY);
     }
 
-    private boolean isValidX(int x) {
+    private boolean isValidX(long x) {
         return x >= 0 && x < grid.get(0).size();
     }
 
-    private boolean isValidY(int y) {
+    private boolean isValidY(long y) {
         return y >= 0 && y < grid.size();
     }
 }

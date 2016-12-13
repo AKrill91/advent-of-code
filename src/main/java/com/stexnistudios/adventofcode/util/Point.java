@@ -6,23 +6,23 @@ public class Point {
 
     public static final Point ZERO = new Point(0, 0);
 
-    private final int x;
-    private final int y;
+    private final long x;
+    private final long y;
 
     public Point() {
         this(0, 0);
     }
 
-    public Point(int x, int y) {
+    public Point(long x, long y) {
         this.x = x;
         this.y = y;
     }
 
-    public int getX() {
+    public long getX() {
         return x;
     }
 
-    public int getY() {
+    public long getY() {
         return y;
     }
 
