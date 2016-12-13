@@ -3,9 +3,9 @@ package com.stexnistudios.adventofcode.day12;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Day12aSolver extends Day12Solver {
+public class Day12bSolver extends Day12Solver {
 
-    public Day12aSolver(String input) {
+    public Day12bSolver(String input) {
         super(input, getRegisters());
     }
 
@@ -13,7 +13,7 @@ public class Day12aSolver extends Day12Solver {
         Map<Character, Integer> registers = new HashMap<>();
         registers.put('a', 0);
         registers.put('b', 0);
-        registers.put('c', 0);
+        registers.put('c', 1);
         registers.put('d', 0);
 
         return registers;
