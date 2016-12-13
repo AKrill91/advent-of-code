@@ -7,11 +7,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day13aSolver extends Solver {
-    private final Point start;
-    private final Point end;
+    protected final Point start;
+    protected final Point end;
     private final HashMap<Point, Boolean> cache;
-    private final Set<Point> explored;
-    private final HashMap<Point, Integer> scores;
+    protected final Set<Point> explored;
+    protected final HashMap<Point, Integer> scores;
 
     public Day13aSolver(String input) {
         this(input, new Point(1, 1), new Point(31, 39));
@@ -50,12 +50,12 @@ public class Day13aSolver extends Solver {
         return scores.get(end);
     }
 
-    private void setScore(Point point, int score) {
+    protected void setScore(Point point, int score) {
         scores.put(point, score);
         explored.add(point);
     }
 
-    private Set<Point> getNeighbors(Point current, int favorite) {
+    protected Set<Point> getNeighbors(Point current, int favorite) {
         long x = current.getX();
         long y = current.getY();
         List<Point> neighbors = new ArrayList<>(4);
