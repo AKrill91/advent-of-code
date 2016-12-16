@@ -19,14 +19,12 @@ public class Application implements Runnable {
 
         String day = args[0];
 
-        InputStream inStream;
+        InputStream inStream = Application.class
+            .getResourceAsStream(
+                "/day" + day + ".txt"
+            );
 
-        try {
-            inStream = Application.class
-                .getResourceAsStream(
-                    "/day" + day + ".txt"
-                );
-        } catch (Exception e) {
+        if(inStream == null) {
             inStream = Application.class
                 .getResourceAsStream(
                     "/day" + day.substring(0, day.length() - 1) + ".txt"
