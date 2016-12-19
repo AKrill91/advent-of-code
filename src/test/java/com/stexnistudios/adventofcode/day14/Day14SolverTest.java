@@ -6,6 +6,7 @@ import org.junit.Test;
 
 public class Day14SolverTest {
     @Test
+    @Ignore("Takes ~1.5s")
     public void testA() throws Exception {
         String input = "abc";
         Assert.assertEquals(22728, new Day14aSolver(input).call().intValue());
