@@ -39,4 +39,13 @@ public class Range<T extends Comparable<T>> implements Comparable<Range<T>> {
     public int compareTo(Range<T> other) {
         return minimum.compareTo(other.minimum);
     }
+
+    @Override
+    public String toString() {
+        return "Range{" +
+            "min=" + minimum +
+            ", max=" + maximum +
+            ", inclusive=" + inclusive +
+            '}';
+    }
 }

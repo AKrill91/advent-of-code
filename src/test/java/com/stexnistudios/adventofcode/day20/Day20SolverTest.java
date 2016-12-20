@@ -18,4 +18,13 @@ public class Day20SolverTest {
 
         Assert.assertEquals(9L, new Day20aSolver(input).call().longValue());
     }
+
+    @Test
+    public void testB() throws Exception {
+        String input = "5-8\n" +
+            "0-2\n" +
+            "4-7";
+
+        Assert.assertEquals(2L, new Day20bSolver(input, 0, 9).call().longValue());
+    }
 }
