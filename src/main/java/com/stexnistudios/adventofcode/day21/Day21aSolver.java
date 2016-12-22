@@ -7,25 +7,25 @@ import java.util.regex.Pattern;
 
 public class Day21aSolver extends Solver {
 
-    private final Pattern swapPos = Pattern.compile(
+    protected final Pattern swapPos = Pattern.compile(
         "swap position (\\d+) with position (\\d+)"
     );
-    private final Pattern swapLet = Pattern.compile(
+    protected final Pattern swapLet = Pattern.compile(
         "swap letter ([a-z]) with letter ([a-z])"
     );
-    private final Pattern rotLeftSteps = Pattern.compile(
+    protected final Pattern rotLeftSteps = Pattern.compile(
         "rotate left (\\d+) steps?"
     );
-    private final Pattern rotRightSteps = Pattern.compile(
+    protected final Pattern rotRightSteps = Pattern.compile(
         "rotate right (\\d+) steps?"
     );
-    private final Pattern rotLetter = Pattern.compile(
+    protected final Pattern rotLetter = Pattern.compile(
         "rotate based on position of letter ([a-z])"
     );
-    private final Pattern reverse = Pattern.compile(
+    protected final Pattern reverse = Pattern.compile(
         "reverse positions (\\d+) through (\\d+)"
     );
-    private final Pattern move = Pattern.compile(
+    protected final Pattern move = Pattern.compile(
         "move position (\\d+) to position (\\d+)"
     );
 
@@ -47,7 +47,6 @@ public class Day21aSolver extends Solver {
 
         for (String step : getInput().split("\n")) {
             step = step.trim();
-            char[] before = output;
             if (step.contains("swap")) {
                 output = handleSwap(step, output);
             } else if (step.contains("rotate")) {
@@ -57,8 +56,6 @@ public class Day21aSolver extends Solver {
             } else if (step.contains("move")) {
                 output = handleMove(step, output);
             }
-
-            logger.info("{} -> {} -> {}", before, step, output);
         }
 
         return new String(output);
