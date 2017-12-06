@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class Day04Solver extends Solver {
 
-    Collection<String> lines;
+    private Collection<String> lines;
 
     public Day04Solver(String input) {
         super(input);
