@@ -5,9 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.time.LocalDate;
 import java.util.Scanner;
 
-public class Application implements Runnable {
+public class Application {
     public static void main(String[] args) throws Exception {
         Logger logger = LoggerFactory.getLogger(Application.class);
 
@@ -16,29 +17,29 @@ public class Application implements Runnable {
             System.exit(1);
         }
 
+        String year = String.valueOf(LocalDate.now().getYear());
+        String day;
 
-        String day = args[0];
+        if (args.length == 1) {
+            day = args[0];
+        } else {
+            year = args[0];
+            day = args[1];
+        }
 
         InputStream inStream = Application.class
             .getResourceAsStream(
-                "/day" + day + ".txt"
+                String.format("/year%s/day%s.txt", year, day)
             );
-
-        if(inStream == null) {
-            inStream = Application.class
-                .getResourceAsStream(
-                    "/day" + day.substring(0, day.length() - 1) + ".txt"
-                );
-        }
 
         String input = new Scanner(inStream).useDelimiter("\\A").next();
 
         String className = String.format(
-            "com.stexnistudios.adventofcode.day%s.Day%sSolver",
-            day.substring(0, day.length() - 1),
+            "com.stexnistudios.adventofcode.year%s.day%s.Day%sSolver",
+            year,
+            day,
             day
         );
-
 
         Class<?> solverClass = Class.forName(className);
         Constructor<?> constructor = solverClass.getConstructor(String.class);
@@ -49,27 +50,12 @@ public class Application implements Runnable {
             System.exit(2);
         }
 
-        new Application((Solver) instance).run();
-    }
+        Solver solver = (Solver) instance;
 
-    private final Solver solver;
+        Object resultA = solver.solveA();
+        Object resultB = solver.solveB();
 
-    private final Logger logger;
-
-    public Application(Solver solver) {
-        logger = LoggerFactory.getLogger(getClass());
-
-        this.solver = solver;
-    }
-
-
-    @Override
-    public void run() {
-        try {
-            Object output = solver.call();
-            logger.info("Output: {}", output);
-        } catch (Exception e) {
-            logger.error("Error solving problem: {}", e.getMessage(), e);
-        }
+        logger.info("Result A is {}", resultA);
+        logger.info("Result B is {}", resultB);
     }
 }
