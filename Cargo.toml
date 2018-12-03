@@ -5,3 +5,5 @@ authors = ["Austin Krill <akrill91@gmail.com>"]
 
 [dependencies]
 time = "0.1"
+log = "0.4.0"
+env_logger = "0.6.0"
