@@ -24,7 +24,9 @@ fn main() {
 
     if true {
         info!("Starting day03");
-        day03::run_a(advent_helper::read_file_lines("resources/day03.txt").expect("Error reading file"));
-        day03::run_b();
+        let input = advent_helper::read_file_lines("resources/day03.txt").expect("Error reading file");
+
+        day03::run_a(&input);
+        day03::run_b(&input);
     }
 }
