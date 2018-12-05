@@ -47,5 +47,6 @@ fn main() {
         let input = advent_helper::read_file_bytes("resources/day05.txt");
 
         day05::run_a(&input);
+        day05::run_b(&input);
     }
 }
