@@ -40,7 +40,7 @@ pub fn run_b() {
 }
 
 fn get_adjustments() -> Vec<i32> {
-    let lines = advent_helper::read_file_lines("resources/day01.txt").expect("Error reading file");
+    let lines = advent_helper::read_file_lines("resources/day01.txt");
 
     let mut adjustments = Vec::new();
 

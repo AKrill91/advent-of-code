@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use advent_helper;
 
 pub fn run_a() -> i32 {
-    let ids = advent_helper::read_file_lines("resources/day02.txt").expect("Error reading file");
+    let ids = advent_helper::read_file_lines("resources/day02.txt");
 
     let mut num_twos = 0;
     let mut num_threes = 0;
@@ -51,7 +51,7 @@ pub fn run_a() -> i32 {
 }
 
 pub fn run_b() -> String {
-    let ids = advent_helper::read_file_lines("resources/day02.txt").expect("Error reading file");
+    let ids = advent_helper::read_file_lines("resources/day02.txt");
     let mut output = String::from("");
 
     for (index, id) in ids.iter().enumerate() {

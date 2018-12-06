@@ -55,7 +55,7 @@ pub fn run_b(bytes: &[u8]) -> String {
 
         let len = output.len();
 
-        info!("Removing {} resulted in a length of {}", to_remove, len);
+        debug!("Removing {} resulted in a length of {}", to_remove, len);
 
         if len < shortest_len {
             shortest_result = String::from_utf8(output).unwrap();
