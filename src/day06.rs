@@ -81,7 +81,7 @@ pub fn run_a(input: &Vec<String>) -> i32 {
             }
         }
 
-        println!("{}", line);
+//        println!("{}", line);
     }
 
     let mut area_totals: HashMap<char, i32> = HashMap::new();
@@ -111,10 +111,49 @@ pub fn run_a(input: &Vec<String>) -> i32 {
     max_area
 }
 
-pub fn run_b(input: &Vec<String>) -> i32 {
-    let points = parse_origins(input);
+pub fn run_b(input: &Vec<String>, max_distance: i32) -> i32 {
+    let origins = parse_origins(input);
 
-    points.len() as i32
+    let mut max_x = -1;
+    let mut max_y = -1;
+
+    for origin in &origins {
+        if origin.point.x > max_x {
+            max_x = origin.point.x;
+        }
+
+        if origin.point.y > max_y {
+            max_y = origin.point.y;
+        }
+    }
+
+    info!("Found {} origins, grid is {} x {}", origins.len(), max_x, max_y);
+
+    let mut num_points_in_distance = 0;
+
+    for y in 0..max_y + 1 {
+        let mut line = String::with_capacity((max_x + 1) as usize);
+
+        for x in 0..max_x + 1 {
+            let point = Point { x, y };
+
+            let mut origin_distance = 0;
+
+            for origin in &origins {
+                let distance = point.distance_to(&origin.point);
+
+                origin_distance += distance;
+            }
+
+            if origin_distance < max_distance {
+                num_points_in_distance += 1;
+            }
+        }
+    }
+
+    info!("{} points are within {} combined distance to origins", num_points_in_distance, max_distance);
+
+    num_points_in_distance
 }
 
 fn parse_origins(input: &Vec<String>) -> Vec<Origin> {
@@ -210,5 +249,19 @@ mod tests {
         ];
 
         assert_eq!(17, run_a(&sample));
+    }
+
+    #[test]
+    fn sample_input_b() {
+        let sample = vec![
+            String::from("1, 1"),
+            String::from("1, 6"),
+            String::from("8, 3"),
+            String::from("3, 4"),
+            String::from("5, 5"),
+            String::from("8, 9")
+        ];
+
+        assert_eq!(16, run_b(&sample, 32));
     }
 }
