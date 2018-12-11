@@ -70,6 +70,6 @@ fn main() {
         let input = advent_helper::read_file_lines("resources/day07.txt");
 
         day07::run_a(&input);
-        day07::run_b(&input);
+        day07::run_b(&input, 5, 60);
     }
 }
