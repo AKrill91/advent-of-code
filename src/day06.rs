@@ -15,10 +15,6 @@ impl PartialEq for Point {
 impl Eq for Point {}
 
 impl Point {
-    pub fn distance_between(first: &Point, second: &Point) -> i32 {
-        return first.distance_to(second);
-    }
-
     pub fn distance_to(&self, other: &Point) -> i32 {
         return (self.x - other.x).abs() + (self.y - other.y).abs();
     }
@@ -132,8 +128,6 @@ pub fn run_b(input: &Vec<String>, max_distance: i32) -> i32 {
     let mut num_points_in_distance = 0;
 
     for y in 0..max_y + 1 {
-        let mut line = String::with_capacity((max_x + 1) as usize);
-
         for x in 0..max_x + 1 {
             let point = Point { x, y };
 
@@ -202,7 +196,7 @@ mod tests {
         let first = Point { x: -1, y: -1 };
         let second = Point { x: -3, y: -3 };
 
-        assert_eq!(4, Point::distance_between(&first, &second));
+        assert_eq!(4, first.distance_to(&second));
     }
 
     #[test]
@@ -210,7 +204,7 @@ mod tests {
         let first = Point { x: -1, y: -1 };
         let second = Point { x: -3, y: -3 };
 
-        assert_eq!(4, Point::distance_between(&second, &first));
+        assert_eq!(4, second.distance_to(&first));
     }
 
     #[test]
