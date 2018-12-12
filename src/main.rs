@@ -12,14 +12,11 @@ mod day04;
 mod day05;
 mod day06;
 mod day07;
+mod day08;
 mod advent_helper;
 
 fn main() {
     env_logger::init();
-
-    for i in 1..10 {
-        println!("{}", i);
-    }
 
     if false {
         info!("Starting day01");
@@ -65,11 +62,19 @@ fn main() {
         day06::run_b(&input, 10000);
     }
 
-    if true {
+    if false {
         info!("Starting day07");
         let input = advent_helper::read_file_lines("resources/day07.txt");
 
         day07::run_a(&input);
         day07::run_b(&input, 5, 60);
+    }
+
+    if true {
+        info!("Starting day08");
+        let input = advent_helper::read_file_lines("resources/day08.txt");
+
+        day08::run_a(&input);
+//        day08::run_b(&input, 5, 60);
     }
 }

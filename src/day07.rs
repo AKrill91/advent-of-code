@@ -14,7 +14,7 @@ impl Instruction {
     pub fn upsert_step(&mut self, step_id: u8) {
         self.steps
             .entry(step_id)
-            .or_insert(Step { id: step_id, parent_ids: Vec::new(), complete: false });
+            .or_insert(Step { parent_ids: Vec::new(), complete: false });
     }
 
     pub fn add_prerequisite(&mut self, step_id: u8, prereq_id: u8) {
@@ -59,7 +59,6 @@ impl Instruction {
 }
 
 struct Step {
-    id: u8,
     parent_ids: Vec<u8>,
     complete: bool,
 }
