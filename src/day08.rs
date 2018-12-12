@@ -19,6 +19,26 @@ impl Node {
 
         sum
     }
+
+    pub fn value(&self) -> i32 {
+        let mut value = 0;
+
+        for val in &self.metadata {
+            if self.children.len() == 0 {
+                value += *val;
+            } else {
+                let index = *val as usize - 1;
+                let child: Option<&Node> = self.children.get(index);
+
+                if let Some(c) = child {
+                    value += c.value();
+                }
+            }
+        }
+
+
+        value
+    }
 }
 
 pub fn run_a(input: &Vec<String>) -> i32 {
@@ -29,6 +49,16 @@ pub fn run_a(input: &Vec<String>) -> i32 {
     println!("Sum of metadata is {}", sum);
 
     sum
+}
+
+pub fn run_b(input: &Vec<String>) -> i32 {
+    let root = parse_input(input);
+
+    let value = root.value();
+
+    println!("Root node value is {}", value);
+
+    value
 }
 
 fn parse_input(input: &Vec<String>) -> Node {
@@ -65,7 +95,7 @@ fn parse_child(iter: &mut Iter<i32>) -> Node {
         metadata.push(*iter.next().unwrap());
     }
 
-    Node { children, metadata}
+    Node { children, metadata }
 }
 
 #[cfg(test)]
@@ -77,5 +107,12 @@ mod tests {
         let input = vec![String::from("2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2")];
 
         assert_eq!(138, run_a(&input));
+    }
+
+    #[test]
+    fn sample_input_b() {
+        let input = vec![String::from("2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2")];
+
+        assert_eq!(66, run_b(&input));
     }
 }
