@@ -1,9 +1,8 @@
-use std::collections::HashMap;
-
-use regex::Regex;
 use std::collections::HashSet;
 
-#[derive(Hash,Eq,PartialEq)]
+use regex::Regex;
+
+#[derive(Hash, Eq, PartialEq)]
 struct Point {
     x: i64,
     y: i64,
@@ -38,9 +37,30 @@ impl BoundingBox {
 }
 
 pub fn run_a(input: &Vec<String>) -> String {
-    let mut lights = parse_input(input);
+    let lights = parse_input(input);
 
-    let mut smallest_box = bounding_box(&lights, 0);
+    let smallest_box_frame = find_smallest_frame(&lights);
+    let smallest_box = bounding_box(&lights, smallest_box_frame);
+
+    let result = draw_lights(&lights, smallest_box_frame, smallest_box);
+
+    println!("{}", result);
+
+    result
+}
+
+pub fn run_b(input: &Vec<String>) -> i64 {
+    let lights = parse_input(input);
+
+    let result = find_smallest_frame(&lights);
+
+    println!("Text appears after {} seconds", result);
+
+    result
+}
+
+fn find_smallest_frame(lights: &Vec<Light>) -> i64 {
+    let mut smallest_box = bounding_box(lights, 0);
     let mut smallest_box_frame = 0;
 
     let mut frame = 1;
@@ -48,7 +68,7 @@ pub fn run_a(input: &Vec<String>) -> String {
     let mut num_frames_increasing = 0;
 
     loop {
-        let bounding_box = bounding_box(&lights, frame);
+        let bounding_box = bounding_box(lights, frame);
 
         if bounding_box.area() < smallest_box.area() {
             smallest_box = bounding_box;
@@ -65,13 +85,7 @@ pub fn run_a(input: &Vec<String>) -> String {
         frame += 1;
     }
 
-    println!("Smallest box occurred at frame {} with area {}", smallest_box_frame, smallest_box.area());
-
-    let result = draw_lights(&lights, smallest_box_frame, smallest_box);
-
-    println!("{}", result);
-
-    result
+    smallest_box_frame
 }
 
 fn parse_input(input: &Vec<String>) -> Vec<Light> {
@@ -139,7 +153,7 @@ fn draw_lights(lights: &Vec<Light>, frame: i64, bounding_box: BoundingBox) -> St
     for y_offset in 0..bounding_box.height + 1 {
         for x_offset in 0..bounding_box.width + 1 {
             let y = bounding_box.y + y_offset;
-            let x = bounding_box.x +  x_offset;
+            let x = bounding_box.x + x_offset;
             let point = Point { x, y };
             let c = if light_points.contains(&point) {
                 '#'
@@ -207,5 +221,46 @@ mod tests {
         );
 
         assert_eq!(expected, run_a(&input));
+    }
+
+    #[test]
+    fn sample_input_b() {
+        let input = vec![
+            String::from("position=< 9,  1> velocity=< 0,  2>"),
+            String::from("position=< 7,  0> velocity=<-1,  0>"),
+            String::from("position=< 3, -2> velocity=<-1,  1>"),
+            String::from("position=< 6, 10> velocity=<-2, -1>"),
+            String::from("position=< 2, -4> velocity=< 2,  2>"),
+            String::from("position=<-6, 10> velocity=< 2, -2>"),
+            String::from("position=< 1,  8> velocity=< 1, -1>"),
+            String::from("position=< 1,  7> velocity=< 1,  0>"),
+            String::from("position=<-3, 11> velocity=< 1, -2>"),
+            String::from("position=< 7,  6> velocity=<-1, -1>"),
+            String::from("position=<-2,  3> velocity=< 1,  0>"),
+            String::from("position=<-4,  3> velocity=< 2,  0>"),
+            String::from("position=<10, -3> velocity=<-1,  1>"),
+            String::from("position=< 5, 11> velocity=< 1, -2>"),
+            String::from("position=< 4,  7> velocity=< 0, -1>"),
+            String::from("position=< 8, -2> velocity=< 0,  1>"),
+            String::from("position=<15,  0> velocity=<-2,  0>"),
+            String::from("position=< 1,  6> velocity=< 1,  0>"),
+            String::from("position=< 8,  9> velocity=< 0, -1>"),
+            String::from("position=< 3,  3> velocity=<-1,  1>"),
+            String::from("position=< 0,  5> velocity=< 0, -1>"),
+            String::from("position=<-2,  2> velocity=< 2,  0>"),
+            String::from("position=< 5, -2> velocity=< 1,  2>"),
+            String::from("position=< 1,  4> velocity=< 2,  1>"),
+            String::from("position=<-2,  7> velocity=< 2, -2>"),
+            String::from("position=< 3,  6> velocity=<-1, -1>"),
+            String::from("position=< 5,  0> velocity=< 1,  0>"),
+            String::from("position=<-6,  0> velocity=< 2,  0>"),
+            String::from("position=< 5,  9> velocity=< 1, -2>"),
+            String::from("position=<14,  7> velocity=<-2,  0>"),
+            String::from("position=<-3,  6> velocity=< 2, -1>")
+        ];
+
+        let expected = 3;
+
+        assert_eq!(expected, run_b(&input));
     }
 }
