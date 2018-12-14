@@ -1,7 +1,23 @@
 use regex::Regex;
 use std::collections::HashMap;
 
-pub fn run_a(input: &Vec<String>) -> i32 {
+pub fn run_a(input: &Vec<String>) -> i64 {
+    let (num_players, last_marble) = parse_input(input);
+
+    println!("{} players, {} last marble", num_players, last_marble);
+
+    play_game(num_players, last_marble)
+}
+
+pub fn run_b(input: &Vec<String>, multiplier: i32) -> i64 {
+    let (num_players, last_marble) = parse_input(input);
+
+    println!("{} players, {} last marble, {} multiplier", num_players, last_marble, multiplier);
+
+    play_game(num_players, last_marble * multiplier)
+}
+
+fn parse_input(input: &Vec<String>) -> (i32, i32) {
     let pattern = Regex::new("(\\d+) players; last marble is worth (\\d+) points").unwrap();
 
     let line = input.first().unwrap();
@@ -15,14 +31,16 @@ pub fn run_a(input: &Vec<String>) -> i32 {
     let num_players = captures.get(1).unwrap().as_str().parse::<i32>().unwrap();
     let last_marble = captures.get(2).unwrap().as_str().parse::<i32>().unwrap();
 
-    println!("{} players, {} last marble", num_players, last_marble);
+    (num_players, last_marble)
+}
 
-    let mut circle = Vec::new();
+fn play_game(num_players: i32, last_marble: i32) -> i64 {
+    let mut circle = Vec::with_capacity(last_marble as usize);
     circle.push(0);
     circle.push(2);
     circle.push(1);
 
-    let mut player_scores = HashMap::new();
+    let mut player_scores: HashMap<i32, i64> = HashMap::new();
 
     let mut current_player = 2;
     let mut current_marble_index : usize = 1;
@@ -30,7 +48,7 @@ pub fn run_a(input: &Vec<String>) -> i32 {
     for i in 3..last_marble + 1 {
         if i % 23 == 0 {
             let player_score = player_scores.entry(current_player).or_insert(0);
-            *player_score += i;
+            *player_score += i as i64;
 
             let mut remove_index : i32 = current_marble_index as i32 - 7;
             if remove_index < 0 {
@@ -41,7 +59,7 @@ pub fn run_a(input: &Vec<String>) -> i32 {
 
             let removed_marble : i32 = *circle.get(remove_index).unwrap();
 
-            *player_score += removed_marble;
+            *player_score += removed_marble as i64;
             circle.remove(remove_index as usize);
 
             current_marble_index = remove_index;
