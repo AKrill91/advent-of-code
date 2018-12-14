@@ -1,9 +1,9 @@
 extern crate chrono;
+extern crate core;
 extern crate env_logger;
 #[macro_use]
 extern crate log;
 extern crate regex;
-extern crate core;
 
 mod day01;
 mod day02;
@@ -15,6 +15,7 @@ mod day07;
 mod day08;
 mod day09;
 mod day10;
+mod day11;
 mod advent_helper;
 
 fn main() {
@@ -88,11 +89,19 @@ fn main() {
         day09::run_b(&input, 100);
     }
 
-    if true {
+    if false {
         info!("Starting day10");
         let input = advent_helper::read_file_lines("resources/day10.txt");
 
         day10::run_a(&input);
         day10::run_b(&input);
+    }
+
+    if true {
+        info!("Starting day11");
+        let input = 3999;
+
+        day11::run_a(input, 300, 300);
+//        day11::run_b(&input);
     }
 }
