@@ -13,6 +13,7 @@ mod day05;
 mod day06;
 mod day07;
 mod day08;
+mod day09;
 mod advent_helper;
 
 fn main() {
@@ -70,11 +71,19 @@ fn main() {
         day07::run_b(&input, 5, 60);
     }
 
-    if true {
+    if false {
         info!("Starting day08");
         let input = advent_helper::read_file_lines("resources/day08.txt");
 
         day08::run_a(&input);
         day08::run_b(&input);
+    }
+
+    if true {
+        info!("Starting day09");
+        let input = advent_helper::read_file_lines("resources/day09.txt");
+
+        day09::run_a(&input);
+//        day09::run_b(&input);
     }
 }
