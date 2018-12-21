@@ -1,19 +1,11 @@
-use std::collections::HashMap;
-
-#[derive(Hash, Eq, PartialEq)]
-struct Point {
-    x: i32,
-    y: i32,
-}
-
 struct PowerResult {
-    x: i32,
-    y: i32,
-    size: i32,
+    x: usize,
+    y: usize,
+    size: usize,
     power: i32,
 }
 
-pub fn run_a(serial_number: i32, width: i32, height: i32) -> String {
+pub fn run_a(serial_number: i32, width: usize, height: usize) -> String {
     let power_levels = get_power_levels(serial_number, width, height);
 
     let max_result = find_max_point(width, height, 3, &power_levels);
@@ -25,18 +17,17 @@ pub fn run_a(serial_number: i32, width: i32, height: i32) -> String {
     result
 }
 
-pub fn run_b(serial_number: i32, width: i32, height: i32) -> String {
+pub fn run_b(serial_number: i32, width: usize, height: usize) -> String {
     let power_levels = get_power_levels(serial_number, width, height);
 
-    let mut max_result = PowerResult {x: 0, y: 0, size: 0, power: 0};
+    let mut max_result = PowerResult { x: 0, y: 0, size: 0, power: 0 };
 
     for size in 1..301 {
-        println!("Checking size {}", size);
         let power_result = find_max_point(
             width,
             height,
             size,
-            &power_levels
+            &power_levels,
         );
 
         if power_result.power > max_result.power {
@@ -56,63 +47,63 @@ pub fn run_b(serial_number: i32, width: i32, height: i32) -> String {
     );
 
     result
-
 }
 
-fn find_max_point(width: i32, height: i32, size: i32, power_levels: &HashMap<Point, i32>) -> PowerResult{
-
+fn find_max_point(width: usize, height: usize, size: usize, power_levels: &Vec<i32>) -> PowerResult {
     let mut max_power = 0;
-    let mut max_point = Point { x: 0, y: 0 };
+    let mut max_x = 0;
+    let mut max_y = 0;
 
     let y_max = height - size + 1;
     let x_max = width - size + 1;
 
-    for y in 0..y_max  {
+    for y in 0..y_max {
         for x in 0..x_max {
             let mut sum_power = 0;
 
             for y_offset in 0..size {
                 for x_offset in 0..size {
-                    let point = Point {
-                        x: x + x_offset,
-                        y: y + y_offset,
-                    };
+                    let point_x = x + x_offset;
+                    let point_y = y + y_offset;
+                    let index = point_y * width + point_x;
 
-                    let power_level = *power_levels.get(&point).unwrap();
+                    let power_level = power_levels[index];
                     sum_power += power_level;
                 }
             }
 
             if sum_power > max_power {
                 max_power = sum_power;
-                max_point = Point { x, y };
+                max_x = x;
+                max_y = y;
             }
         }
     }
 
     PowerResult {
-        x: max_point.x,
-        y: max_point.y,
+        x: max_x,
+        y: max_y,
         size,
-        power: max_power
+        power: max_power,
     }
 }
 
-fn get_power_levels(serial_number: i32, width: i32, height: i32) -> HashMap<Point, i32> {
-    let mut output = HashMap::new();
+fn get_power_levels(serial_number: i32, width: usize, height: usize) -> Vec<i32> {
+    let mut output = vec![0; width * height];
 
-    for x in 0..width + 1 {
-        for y in 0..height + 1 {
-            output.insert(Point { x, y }, power_level(x, y, serial_number));
+    for y in 0..height {
+        for x in 0..width {
+            let index = y * width + x;
+            output[index] = power_level(x, y, serial_number);
         }
     }
 
     output
 }
 
-fn power_level(x: i32, y: i32, serial_number: i32) -> i32 {
-    let rack_id = x + 10;
-    let mut power_level = rack_id * y;
+fn power_level(x: usize, y: usize, serial_number: i32) -> i32 {
+    let rack_id = x as i32 + 10;
+    let mut power_level = rack_id * (y as i32);
 
     power_level += serial_number;
     power_level *= rack_id;

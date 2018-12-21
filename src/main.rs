@@ -102,6 +102,6 @@ fn main() {
         let input = 3999;
 
         day11::run_a(input, 300, 300);
-//        day11::run_b(&input);
+        day11::run_b(input, 300, 300);
     }
 }
