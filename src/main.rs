@@ -11,9 +11,12 @@ mod advent_helper;
 fn main() {
     env_logger::init();
 
-    if false {
+    if true {
         info!("Starting day01");
-        day01::run_a();
-        day01::run_b();
+        let input = advent_helper::read_file_lines("resources/2019/day01.txt");
+
+        info!("Require {} fuel, without fuel weight", day01::run_a(&input));
+        info!("Require {} fuel, with fuel weight", day01::run_b(&input));
+
     }
 }
