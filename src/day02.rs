@@ -1,35 +1,61 @@
-pub fn run_a(input: &Vec<String>, adjust: bool) -> i64 {
-    let mut intcodes= vec!();
+pub fn run_a(input: &Vec<String>, adjust: bool) -> usize {
+    let intcodes= parse_intcodes(&input);
+    let noun;
+    let verb;
 
-    for line in input {
-        let parts = line.split(",");
-        for part in parts {
-            intcodes.push(part.parse::<i64>().unwrap());
+    if adjust {
+        noun = 12;
+        verb = 2;
+    } else {
+        noun = intcodes[1];
+        verb = intcodes[2];
+    }
+
+    run(&intcodes, noun, verb)
+}
+
+pub fn run_b(input: &Vec<String>, target: usize) -> (usize, usize) {
+    let intcodes = parse_intcodes(&input);
+
+    let mut output = (0, 0);
+
+    for noun in 0..intcodes.len() {
+        for verb in 0..intcodes.len() {
+            let result = run(&intcodes, noun, verb);
+
+            if result == target {
+                output = (noun, verb);
+                break
+            }
         }
     }
 
-    if adjust {
-        intcodes[1] = 12;
-        intcodes[2] = 2;
-    }
+    output
+}
+
+fn run(input: &Vec<usize>, noun: usize, verb: usize) -> usize {
+    let mut copy = input.clone();
+
+    copy[1] = noun;
+    copy[2] = verb;
 
     let mut i = 0;
     loop {
-        let operation = intcodes[i];
+        let operation = copy[i];
 
         if operation == 99 {
             break;
         } else if operation == 1 {
-            let left = intcodes[i+1] as usize;
-            let right = intcodes[i+2] as usize;
-            let out = intcodes[i+3] as usize;
-            intcodes[out] = intcodes[left] + intcodes[right];
+            let left = copy[i+1];
+            let right = copy[i+2];
+            let out = copy[i+3];
+            copy[out] = copy[left] + copy[right];
             i = i + 3;
         } else if operation == 2 {
-            let left = intcodes[i+1] as usize;
-            let right = intcodes[i+2] as usize;
-            let out = intcodes[i+3] as usize;
-            intcodes[out] = intcodes[left] * intcodes[right];
+            let left = copy[i+1];
+            let right = copy[i+2];
+            let out = copy[i+3];
+            copy[out] = copy[left] * copy[right];
             i = i + 3;
         } else {
             warn!("Unknown opcode {} encountered at index {}", operation, i);
@@ -38,11 +64,20 @@ pub fn run_a(input: &Vec<String>, adjust: bool) -> i64 {
         i = i + 1;
     }
 
-    intcodes[0]
+    copy[0]
 }
 
-pub fn run_b(input: &Vec<String>) {
+fn parse_intcodes(input: &Vec<String>) -> Vec<usize> {
+    let mut intcodes= vec!();
 
+    for line in input {
+        let parts = line.split(",");
+        for part in parts {
+            intcodes.push(part.parse::<usize>().unwrap());
+        }
+    }
+
+    intcodes
 }
 
 #[cfg(test)]

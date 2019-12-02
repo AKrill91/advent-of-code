@@ -26,5 +26,9 @@ fn main() {
         let input = advent_helper::read_file_lines("resources/2019/day02.txt");
 
         info!("{} was at position 0", day02::run_a(&input, true));
+        let target = 19690720;
+        let inputs = day02::run_b(&input, target);
+        let result = 100 * inputs.0 + inputs.1;
+        info!("{}, {} ({}) result in {}", inputs.0, inputs.1, result, target);
     }
 }
