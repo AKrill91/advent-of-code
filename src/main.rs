@@ -8,6 +8,7 @@ extern crate regex;
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 mod advent_helper;
 
 fn main() {
@@ -41,5 +42,15 @@ fn main() {
         info!("Closest intersection (manhattan) is {} away", distance);
         let distance = day03::run_b(&input);
         info!("Closest intersection (along wire) is {} away", distance);
+    }
+
+    if true {
+        info!("Starting day04");
+        let input = advent_helper::read_file_lines("resources/2019/day04.txt");
+
+        let num_valid = day04::run_a(&input);
+        info!("{} passwords are valid", num_valid);
+        let num_valid = day04::run_b(&input);
+        info!("{} passwords are valid with more strict requirements", num_valid);
     }
 }
