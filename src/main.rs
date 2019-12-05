@@ -9,6 +9,7 @@ mod day01;
 mod day02;
 mod day03;
 mod day04;
+mod day05;
 mod advent_helper;
 
 fn main() {
@@ -52,5 +53,13 @@ fn main() {
         info!("{} passwords are valid", num_valid);
         let num_valid = day04::run_b(&input);
         info!("{} passwords are valid with more strict requirements", num_valid);
+    }
+
+    if true {
+        info!("Starting day05");
+        let input = advent_helper::read_file_lines("resources/2019/day05.txt");
+
+        let outputs = day05::run_a(&input);
+        info!("Outputs: {:?}", outputs);
     }
 }
