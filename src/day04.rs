@@ -64,7 +64,7 @@ fn run(input: &Vec<String>, check_function: fn(i32) -> bool) -> i64 {
 }
 
 fn find_first_valid(input: i32) -> i32 {
-    let mut hun_tho = input / 100_000;
+    let hun_tho = input / 100_000;
     let mut ten_tho = (input / 10_000) % 10;
     let mut tho = (input / 1_000) % 10;
     let mut hun = (input / 100) % 10;

@@ -11,6 +11,7 @@ mod day03;
 mod day04;
 mod day05;
 mod advent_helper;
+mod intcode_computer;
 
 fn main() {
     env_logger::init();
@@ -59,7 +60,7 @@ fn main() {
         info!("Starting day05");
         let input = advent_helper::read_file_lines("resources/2019/day05.txt");
 
-        let outputs = day05::run_a(&input);
-        info!("Outputs: {:?}", outputs);
+        info!("Outputs: {:?}", day05::run_a(&input));
+        info!("Outputs: {:?}", day05::run_b(&input));
     }
 }
