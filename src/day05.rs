@@ -1,5 +1,4 @@
 use intcode_computer::{IntCodeComputer, OpCode};
-use std::collections::HashSet;
 
 pub fn run_a(input: &Vec<String>) -> Vec<i32>{
     let unsupported = vec![OpCode::JumpIfTrue, OpCode::JumpIfFalse, OpCode::LessThan, OpCode::Equals];

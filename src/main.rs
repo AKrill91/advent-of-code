@@ -1,5 +1,6 @@
 extern crate chrono;
 extern crate core;
+extern crate ego_tree;
 extern crate env_logger;
 #[macro_use]
 extern crate log;
@@ -10,6 +11,8 @@ mod day02;
 mod day03;
 mod day04;
 mod day05;
+mod day06;
+
 mod advent_helper;
 mod intcode_computer;
 
@@ -62,5 +65,13 @@ fn main() {
 
         info!("Outputs: {:?}", day05::run_a(&input));
         info!("Outputs: {:?}", day05::run_b(&input));
+    }
+
+    if true {
+        info!("Starting day06");
+        let input = advent_helper::read_file_lines("resources/2019/day06.txt");
+
+        info!("Total number of orbits: {}", day06::run_a(&input));
+        info!("Number of orbital assists needed: {}", day06::run_b(&input));
     }
 }
