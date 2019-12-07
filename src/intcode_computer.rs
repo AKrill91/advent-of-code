@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-#[derive(Debug,Eq,PartialEq,Hash,Copy,Clone)]
+#[derive(Debug, Eq, PartialEq, Hash, Copy, Clone)]
 pub enum OpCode {
     Add, //1
     Multiply, //2
@@ -47,7 +47,7 @@ impl OpCode {
 #[derive(Debug)]
 enum ParameterMode {
     Position,
-    Immediate
+    Immediate,
 }
 
 impl ParameterMode {
@@ -68,12 +68,19 @@ struct Instruction {
     param_3: i32,
     param_1_mode: ParameterMode,
     param_2_mode: ParameterMode,
-    param_3_mode: ParameterMode
+    param_3_mode: ParameterMode,
 }
 
 pub struct IntCodeComputer {
+    unsupported_opcodes: HashSet<OpCode>
+}
+
+pub struct IntCodeProgram {
     unsupported_opcodes: HashSet<OpCode>,
-    halted: bool
+    intcodes: Vec<i32>,
+    position: usize,
+    outputs: Vec<i32>,
+    halted: bool,
 }
 
 impl IntCodeComputer {
@@ -84,43 +91,79 @@ impl IntCodeComputer {
             set.insert(code);
         }
 
-        IntCodeComputer{
-            unsupported_opcodes: set,
-            halted: false
+        IntCodeComputer {
+            unsupported_opcodes: set
         }
     }
 
-    pub fn run(&mut self, instructions: &Vec<String>, inputs: Vec<i32>) -> Vec<i32> {
-        let mut intcodes = parse_intcodes(&instructions);
+    pub fn run(&self, instructions: &Vec<String>, inputs: Vec<i32>) -> Vec<i32> {
+        let mut program = IntCodeProgram {
+            unsupported_opcodes: self.unsupported_opcodes.clone(),
+            intcodes: IntCodeComputer::parse_intcodes(instructions),
+            position: 0,
+            outputs: vec![],
+            halted: false,
+        };
 
-        let mut input_position = 0;
-        let mut instruction_position = 0;
-        let mut outputs: Vec<i32> = vec![];
+        for i in inputs {
+            program.run(i);
+        }
 
-        while instruction_position < intcodes.len() {
-            let info = intcodes[instruction_position];
+        program.run(-1);
+
+        program.outputs
+    }
+
+    pub fn start(&self, instructions: &Vec<String>) -> IntCodeProgram {
+        IntCodeProgram {
+            unsupported_opcodes: self.unsupported_opcodes.clone(),
+            intcodes: IntCodeComputer::parse_intcodes(instructions),
+            position: 0,
+            outputs: vec![],
+            halted: false,
+        }
+    }
+
+    fn parse_intcodes(input: &Vec<String>) -> Vec<i32> {
+        let mut intcodes: Vec<i32> = vec![];
+
+        for line in input {
+            let parts = line.split(",");
+            for part in parts {
+                intcodes.push(part.parse::<i32>().unwrap());
+            }
+        }
+
+        intcodes
+    }
+}
+
+impl IntCodeProgram {
+    pub fn run(&mut self, input: i32) {
+        while self.position < self.intcodes.len() {
+            let info = self.intcodes[self.position];
             let opcode = OpCode::from_i32(info % 100);
             let mut increment = 1 + opcode.num_parameters();
 
             let param_1 = if opcode.num_parameters() > 0 {
-                intcodes[instruction_position + 1]
+                self.intcodes[self.position + 1]
             } else {
                 0
             };
 
             let param_2 = if opcode.num_parameters() > 1 {
-                intcodes[instruction_position + 2]
+                self.intcodes[self.position + 2]
             } else {
                 0
             };
 
             let param_3 = if opcode.num_parameters() > 2 {
-                intcodes[instruction_position + 3]
+                self.intcodes[self.position + 3]
             } else {
                 0
             };
 
-            let instruction = Instruction{
+            let instruction = Instruction {
                 opcode,
                 param_1,
                 param_2,
@@ -139,89 +182,91 @@ impl IntCodeComputer {
             match instruction.opcode {
                 OpCode::Add => {
                     let left = match instruction.param_1_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_1 as usize]},
-                        ParameterMode::Immediate => {instruction.param_1},
+                        ParameterMode::Position => { self.intcodes[instruction.param_1 as usize] }
+                        ParameterMode::Immediate => { instruction.param_1 }
                     };
 
                     let right = match instruction.param_2_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_2 as usize]},
-                        ParameterMode::Immediate => {instruction.param_2},
+                        ParameterMode::Position => { self.intcodes[instruction.param_2 as usize] }
+                        ParameterMode::Immediate => { instruction.param_2 }
                     };
 
-                    intcodes[instruction.param_3 as usize] = left + right;
-                },
+                    self.intcodes[instruction.param_3 as usize] = left + right;
+                }
                 OpCode::Multiply => {
                     let left = match instruction.param_1_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_1 as usize]},
-                        ParameterMode::Immediate => {instruction.param_1},
+                        ParameterMode::Position => { self.intcodes[instruction.param_1 as usize] }
+                        ParameterMode::Immediate => { instruction.param_1 }
                     };
 
                     let right = match instruction.param_2_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_2 as usize]},
-                        ParameterMode::Immediate => {instruction.param_2},
+                        ParameterMode::Position => { self.intcodes[instruction.param_2 as usize] }
+                        ParameterMode::Immediate => { instruction.param_2 }
                     };
 
-                    intcodes[instruction.param_3 as usize] = left * right;
-                },
+                    self.intcodes[instruction.param_3 as usize] = left * right;
+                }
                 OpCode::Input => {
-                    intcodes[instruction.param_1 as usize] = inputs[input_position];
-                    input_position += 1;
-                },
+                    self.intcodes[instruction.param_1 as usize] = input;
+                    self.position += increment;
+                    break;
+                }
                 OpCode::Output => {
                     let out = match instruction.param_1_mode {
-                        ParameterMode::Position => intcodes[instruction.param_1 as usize],
+                        ParameterMode::Position => self.intcodes[instruction.param_1 as usize],
                         ParameterMode::Immediate => instruction.param_1
                     };
-                    outputs.push(out);
-                },
+
+                    self.outputs.push(out);
+                }
                 OpCode::Halt => {
                     self.halted = true;
                     break;
-                },
+                }
                 OpCode::JumpIfTrue => {
                     let left = match instruction.param_1_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_1 as usize]},
-                        ParameterMode::Immediate => {instruction.param_1},
+                        ParameterMode::Position => { self.intcodes[instruction.param_1 as usize] }
+                        ParameterMode::Immediate => { instruction.param_1 }
                     };
 
                     if left > 0 {
                         let right = match instruction.param_2_mode {
-                            ParameterMode::Position => { intcodes[instruction.param_2 as usize] },
-                            ParameterMode::Immediate => { instruction.param_2 },
+                            ParameterMode::Position => { self.intcodes[instruction.param_2 as usize] }
+                            ParameterMode::Immediate => { instruction.param_2 }
                         };
 
-                        instruction_position = right as usize;
+                        self.position = right as usize;
                         increment = 0;
                     }
                 }
                 OpCode::JumpIfFalse => {
                     let left = match instruction.param_1_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_1 as usize]},
-                        ParameterMode::Immediate => {instruction.param_1},
+                        ParameterMode::Position => { self.intcodes[instruction.param_1 as usize] }
+                        ParameterMode::Immediate => { instruction.param_1 }
                     };
 
                     if left == 0 {
                         let right = match instruction.param_2_mode {
-                            ParameterMode::Position => { intcodes[instruction.param_2 as usize] },
-                            ParameterMode::Immediate => { instruction.param_2 },
+                            ParameterMode::Position => { self.intcodes[instruction.param_2 as usize] }
+                            ParameterMode::Immediate => { instruction.param_2 }
                         };
 
-                        instruction_position = right as usize;
+                        self.position = right as usize;
                         increment = 0;
                     }
                 }
                 OpCode::LessThan => {
                     let left = match instruction.param_1_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_1 as usize]},
-                        ParameterMode::Immediate => {instruction.param_1},
+                        ParameterMode::Position => { self.intcodes[instruction.param_1 as usize] }
+                        ParameterMode::Immediate => { instruction.param_1 }
                     };
 
                     let right = match instruction.param_2_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_2 as usize]},
-                        ParameterMode::Immediate => {instruction.param_2},
+                        ParameterMode::Position => { self.intcodes[instruction.param_2 as usize] }
+                        ParameterMode::Immediate => { instruction.param_2 }
                     };
 
-                    intcodes[instruction.param_3 as usize] = if left < right {
+                    self.intcodes[instruction.param_3 as usize] = if left < right {
                         1
                     } else {
                         0
@@ -229,16 +274,16 @@ impl IntCodeComputer {
                 }
                 OpCode::Equals => {
                     let left = match instruction.param_1_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_1 as usize]},
-                        ParameterMode::Immediate => {instruction.param_1},
+                        ParameterMode::Position => { self.intcodes[instruction.param_1 as usize] }
+                        ParameterMode::Immediate => { instruction.param_1 }
                     };
 
                     let right = match instruction.param_2_mode {
-                        ParameterMode::Position => {intcodes[instruction.param_2 as usize]},
-                        ParameterMode::Immediate => {instruction.param_2},
+                        ParameterMode::Position => { self.intcodes[instruction.param_2 as usize] }
+                        ParameterMode::Immediate => { instruction.param_2 }
                     };
 
-                    intcodes[instruction.param_3 as usize] = if left == right {
+                    self.intcodes[instruction.param_3 as usize] = if left == right {
                         1
                     } else {
                         0
@@ -246,24 +291,9 @@ impl IntCodeComputer {
                 }
             };
 
-            instruction_position += increment;
-        }
-
-        outputs
-    }
-}
-
-fn parse_intcodes(input: &Vec<String>) -> Vec<i32> {
-    let mut intcodes: Vec<i32> = vec![];
-
-    for line in input {
-        let parts = line.split(",");
-        for part in parts {
-            intcodes.push(part.parse::<i32>().unwrap());
+            self.position += increment;
         }
     }
-
-    intcodes
 }
 
 #[cfg(test)]
@@ -279,7 +309,7 @@ mod tests {
         init();
         let instructions = vec![String::from("3,9,8,9,10,9,4,9,99,-1,8")];
 
-        let mut computer = IntCodeComputer::new(vec![]);
+        let computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![8])[0]);
     }
@@ -288,7 +318,7 @@ mod tests {
     pub fn sample_input_less_position() {
         let instructions = vec![String::from("3,9,7,9,10,9,4,9,99,-1,8")];
 
-        let mut computer = IntCodeComputer::new(vec![]);
+        let computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![7])[0]);
     }
@@ -297,7 +327,7 @@ mod tests {
     pub fn sample_input_equals_immediate() {
         let instructions = vec![String::from("3,3,1108,-1,8,3,4,3,99")];
 
-        let mut computer = IntCodeComputer::new(vec![]);
+        let computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![8])[0]);
     }
@@ -306,7 +336,7 @@ mod tests {
     pub fn sample_input_less_immediate() {
         let instructions = vec![String::from("3,3,1107,-1,8,3,4,3,99")];
 
-        let mut computer = IntCodeComputer::new(vec![]);
+        let computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![7])[0]);
     }
@@ -315,7 +345,7 @@ mod tests {
     pub fn sample_input_jump_position() {
         let instructions = vec![String::from("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9")];
 
-        let mut computer = IntCodeComputer::new(vec![]);
+        let computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(0, computer.run(&instructions, vec![0])[0]);
     }
@@ -324,9 +354,8 @@ mod tests {
     pub fn sample_input_jump_immediate() {
         let instructions = vec![String::from("3,3,1105,-1,9,1101,0,0,12,4,12,99,1")];
 
-        let mut computer = IntCodeComputer::new(vec![]);
+        let computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![42])[0]);
     }
-
 }
