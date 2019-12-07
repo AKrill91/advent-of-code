@@ -72,7 +72,8 @@ struct Instruction {
 }
 
 pub struct IntCodeComputer {
-    unsupported_opcodes: HashSet<OpCode>
+    unsupported_opcodes: HashSet<OpCode>,
+    halted: bool
 }
 
 impl IntCodeComputer {
@@ -84,11 +85,12 @@ impl IntCodeComputer {
         }
 
         IntCodeComputer{
-            unsupported_opcodes: set
+            unsupported_opcodes: set,
+            halted: false
         }
     }
 
-    pub fn run(&self, instructions: &Vec<String>, inputs: Vec<i32>) -> Vec<i32> {
+    pub fn run(&mut self, instructions: &Vec<String>, inputs: Vec<i32>) -> Vec<i32> {
         let mut intcodes = parse_intcodes(&instructions);
 
         let mut input_position = 0;
@@ -173,6 +175,7 @@ impl IntCodeComputer {
                     outputs.push(out);
                 },
                 OpCode::Halt => {
+                    self.halted = true;
                     break;
                 },
                 OpCode::JumpIfTrue => {
@@ -276,7 +279,7 @@ mod tests {
         init();
         let instructions = vec![String::from("3,9,8,9,10,9,4,9,99,-1,8")];
 
-        let computer = IntCodeComputer::new(vec![]);
+        let mut computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![8])[0]);
     }
@@ -285,7 +288,7 @@ mod tests {
     pub fn sample_input_less_position() {
         let instructions = vec![String::from("3,9,7,9,10,9,4,9,99,-1,8")];
 
-        let computer = IntCodeComputer::new(vec![]);
+        let mut computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![7])[0]);
     }
@@ -294,7 +297,7 @@ mod tests {
     pub fn sample_input_equals_immediate() {
         let instructions = vec![String::from("3,3,1108,-1,8,3,4,3,99")];
 
-        let computer = IntCodeComputer::new(vec![]);
+        let mut computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![8])[0]);
     }
@@ -303,7 +306,7 @@ mod tests {
     pub fn sample_input_less_immediate() {
         let instructions = vec![String::from("3,3,1107,-1,8,3,4,3,99")];
 
-        let computer = IntCodeComputer::new(vec![]);
+        let mut computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![7])[0]);
     }
@@ -312,7 +315,7 @@ mod tests {
     pub fn sample_input_jump_position() {
         let instructions = vec![String::from("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9")];
 
-        let computer = IntCodeComputer::new(vec![]);
+        let mut computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(0, computer.run(&instructions, vec![0])[0]);
     }
@@ -321,7 +324,7 @@ mod tests {
     pub fn sample_input_jump_immediate() {
         let instructions = vec![String::from("3,3,1105,-1,9,1101,0,0,12,4,12,99,1")];
 
-        let computer = IntCodeComputer::new(vec![]);
+        let mut computer = IntCodeComputer::new(vec![]);
 
         assert_eq!(1, computer.run(&instructions, vec![42])[0]);
     }

@@ -4,6 +4,7 @@ extern crate ego_tree;
 extern crate env_logger;
 #[macro_use]
 extern crate log;
+extern crate permutohedron;
 extern crate regex;
 
 mod day01;
@@ -12,6 +13,7 @@ mod day03;
 mod day04;
 mod day05;
 mod day06;
+mod day07;
 
 mod advent_helper;
 mod intcode_computer;
@@ -73,5 +75,15 @@ fn main() {
 
         info!("Total number of orbits: {}", day06::run_a(&input));
         info!("Number of orbital assists needed: {}", day06::run_b(&input));
+    }
+
+    if true {
+        info!("Starting day07");
+
+        let input = advent_helper::read_file_lines("resources/2019/day07.txt");
+
+        info!("Highest signal: {}", day07::run_a(&input));
+        info!("Highest signal with feedback loop: {}", day07::run_b(&input));
+
     }
 }
