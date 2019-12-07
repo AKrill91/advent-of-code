@@ -105,11 +105,11 @@ impl IntCodeComputer {
             halted: false,
         };
 
-        for i in inputs {
-            program.run(i);
-        }
+        program.run();
 
-        program.run(-1);
+        for i in inputs {
+            program.input(i);
+        }
 
         program.outputs
     }
@@ -139,45 +139,12 @@ impl IntCodeComputer {
 }
 
 impl IntCodeProgram {
-    pub fn run(&mut self, input: i32) {
+
+    ///Runs until input is needed.
+    pub fn run(&mut self) {
         while self.position < self.intcodes.len() {
-            let info = self.intcodes[self.position];
-            let opcode = OpCode::from_i32(info % 100);
-            let mut increment = 1 + opcode.num_parameters();
-
-            let param_1 = if opcode.num_parameters() > 0 {
-                self.intcodes[self.position + 1]
-            } else {
-                0
-            };
-
-            let param_2 = if opcode.num_parameters() > 1 {
-                self.intcodes[self.position + 2]
-            } else {
-                0
-            };
-
-            let param_3 = if opcode.num_parameters() > 2 {
-                self.intcodes[self.position + 3]
-            } else {
-                0
-            };
-
-            let instruction = Instruction {
-                opcode,
-                param_1,
-                param_2,
-                param_3,
-                param_1_mode: ParameterMode::from_i32((info / 100) % 10),
-                param_2_mode: ParameterMode::from_i32((info / 1000) % 10),
-                param_3_mode: ParameterMode::from_i32((info / 10000) % 10),
-            };
-
-            if self.unsupported_opcodes.contains(&opcode) {
-                panic!("Unsupported opcode: {:?}", opcode);
-            }
-
-            debug!("{:?}", instruction);
+            let instruction = self.parse_instruction();
+            let mut increment = 1 + instruction.opcode.num_parameters();
 
             match instruction.opcode {
                 OpCode::Add => {
@@ -207,8 +174,6 @@ impl IntCodeProgram {
                     self.intcodes[instruction.param_3 as usize] = left * right;
                 }
                 OpCode::Input => {
-                    self.intcodes[instruction.param_1 as usize] = input;
-                    self.position += increment;
                     break;
                 }
                 OpCode::Output => {
@@ -293,6 +258,74 @@ impl IntCodeProgram {
 
             self.position += increment;
         }
+    }
+
+    ///Runs with given input until more input is required
+    pub fn input(&mut self, input: i32) {
+        let instruction = self.parse_instruction();
+
+        assert_eq!(OpCode::Input, instruction.opcode);
+
+        self.intcodes[instruction.param_1 as usize] = input;
+        self.position += 1 + instruction.opcode.num_parameters();
+
+        self.run();
+    }
+
+    fn parse_instruction(&self) -> Instruction {
+        let info = self.intcodes[self.position];
+        let opcode = OpCode::from_i32(info % 100);
+
+        let param_1 = if opcode.num_parameters() > 0 {
+            self.intcodes[self.position + 1]
+        } else {
+            0
+        };
+
+        let param_2 = if opcode.num_parameters() > 1 {
+            self.intcodes[self.position + 2]
+        } else {
+            0
+        };
+
+        let param_3 = if opcode.num_parameters() > 2 {
+            self.intcodes[self.position + 3]
+        } else {
+            0
+        };
+
+        let instruction = Instruction {
+            opcode,
+            param_1,
+            param_2,
+            param_3,
+            param_1_mode: ParameterMode::from_i32((info / 100) % 10),
+            param_2_mode: ParameterMode::from_i32((info / 1000) % 10),
+            param_3_mode: ParameterMode::from_i32((info / 10000) % 10),
+        };
+
+        if self.unsupported_opcodes.contains(&opcode) {
+            panic!("Unsupported opcode: {:?}", opcode);
+        }
+
+        debug!("{:?}", instruction);
+
+        instruction
+    }
+
+    pub fn halted(&self) -> bool {
+        return self.halted;
+    }
+
+    pub fn latest_output(&self) -> Option<i32> {
+        let mut out = None;
+        let len = self.outputs.len();
+
+        if len > 0 {
+            out = Some(self.outputs[len - 1]);
+        }
+
+        out
     }
 }
 

@@ -33,7 +33,7 @@ pub fn run_a(input: &Vec<String>) -> i32{
     max_signal
 }
 
-pub fn run_b(input: &Vec<String>) -> i64 {
+pub fn run_b(input: &Vec<String>) -> i32 {
     let num_engines = 5;
     let mut phase_settings = vec![5,6,7,8,9];
 
@@ -43,24 +43,47 @@ pub fn run_b(input: &Vec<String>) -> i64 {
     let permutations = Heap::new(&mut phase_settings);
 
     for permutation in permutations {
-        let mut engine_input = 0;
+        let mut programs = vec![];
 
         for i in 0..num_engines {
             let setting = permutation[i];
             let mut computer = IntCodeComputer::new(vec![]);
-
-            let signal = computer.run(input, vec![setting, engine_input]);
-
-            engine_input = signal[0];
+            let mut program = computer.start(input);
+            program.run();
+            program.input(setting);
+            programs.push(program);
         }
 
-        if engine_input > max_signal {
-            max_signal = engine_input;
+        let mut engine_input = 0;
+        let mut last_output = std::i32::MIN;
+        let mut halted = false;
+
+        while !halted {
+            for i in 0..num_engines {
+                debug!("Perm {:?} - Providing {} to engine {}", permutation,  engine_input, i);
+                let mut program = &mut programs[i];
+
+                program.input(engine_input);
+
+                if program.halted() {
+                    halted = true;
+                }
+
+                engine_input = program.latest_output().unwrap();
+            }
+        }
+
+        let compare = programs[num_engines - 1].latest_output().unwrap();
+
+        if compare > max_signal {
+            max_signal = compare;
             best_permutation = permutation;
         }
     }
 
-    0
+    info!("Best signal was {} with {:?}", max_signal, best_permutation);
+
+    max_signal
 }
 
 #[cfg(test)]
@@ -97,6 +120,8 @@ mod tests {
 
     #[test]
     pub fn sample_input_1_b() {
+        let _ = env_logger::builder().is_test(true).try_init();
+
         let input = vec![String::from("3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10")];
 
         assert_eq!(18216, run_b(&input));

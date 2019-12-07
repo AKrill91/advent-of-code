@@ -18,8 +18,12 @@ mod day07;
 mod advent_helper;
 mod intcode_computer;
 
+use std::time::Instant;
+
 fn main() {
     env_logger::init();
+
+    let start = Instant::now();
 
     if true {
         info!("Starting day01");
@@ -84,6 +88,9 @@ fn main() {
 
         info!("Highest signal: {}", day07::run_a(&input));
         info!("Highest signal with feedback loop: {}", day07::run_b(&input));
-
     }
+
+    let elapsed = start.elapsed();
+
+    info!("{:?} millis elapsed", elapsed.as_millis());
 }
