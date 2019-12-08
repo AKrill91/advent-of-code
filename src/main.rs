@@ -97,6 +97,7 @@ fn main() {
         let input = advent_helper::read_file_lines("resources/2019/day08.txt");
 
         info!("Checksum: {}", day08::run_a(&input, 25, 6));
+        info!("Result: \n{}", day08::run_b(&input, 25, 6));
     }
 
     let elapsed = start.elapsed();

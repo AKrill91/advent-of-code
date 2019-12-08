@@ -2,14 +2,50 @@
 struct SpaceImage {
     width: usize,
     height: usize,
-    layers: Vec<SpaceImageLayer>
+    layers: Vec<SpaceImageLayer>,
+}
+
+impl SpaceImage {
+    pub fn flatten(&self) -> SpaceImage {
+        let width = self.width;
+        let height = self.height;
+        let mut data = Vec::with_capacity(width * height);
+
+        for y in 0..height {
+            for x in 0..width {
+                let index = y * width + x;
+                let mut color = 2;
+                for layer in &self.layers  {
+                    let col = layer.at_position(x, y);
+
+                    if col != 2 {
+                        color = col;
+                        break;
+                    }
+                }
+                data.push(color);
+            }
+        }
+
+        SpaceImage {
+            width,
+            height,
+            layers: vec![
+                SpaceImageLayer {
+                    width,
+                    height,
+                    data,
+                }
+            ],
+        }
+    }
 }
 
 #[derive(Eq, PartialEq, Debug)]
 struct SpaceImageLayer {
     width: usize,
     height: usize,
-    data: Vec<i32>
+    data: Vec<i32>,
 }
 
 impl SpaceImageLayer {
@@ -23,6 +59,33 @@ impl SpaceImageLayer {
         }
 
         count
+    }
+
+    pub fn at_index(&self, index: usize) -> i32 {
+        self.data[index]
+    }
+
+    pub fn at_position(&self, x: usize, y: usize) -> i32 {
+        let index = y * self.width + x;
+
+        self.data[index]
+    }
+
+    pub fn print(&self) -> String {
+        let mut chars = vec![];
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let c = match self.at_position(x, y) {
+                    0 => '.',
+                    1 => '@',
+                    _ => '?'
+                };
+                chars.push(c);
+            }
+            chars.push('\n');
+        }
+
+        chars.into_iter().collect()
     }
 }
 
@@ -50,8 +113,12 @@ pub fn run_a(input: &Vec<String>, width: usize, height: usize) -> i32 {
     num_ones * num_twos
 }
 
-pub fn run_b(input: &Vec<String>) -> i32 {
-    0
+pub fn run_b(input: &Vec<String>, width: usize, height: usize) -> String {
+    let image = parse_image(input, width, height);
+
+    let flattened = image.flatten();
+
+    flattened.layers[0].print()
 }
 
 fn parse_image(input: &Vec<String>, width: usize, height: usize) -> SpaceImage {
@@ -67,7 +134,7 @@ fn parse_image(input: &Vec<String>, width: usize, height: usize) -> SpaceImage {
         let mut data = Vec::with_capacity(size);
 
         for pos in 0..size {
-            let c = &data_str[position..position+1];
+            let c = &data_str[position..position + 1];
             data.push(c.parse::<i32>().unwrap());
             position += 1;
         }
@@ -75,14 +142,14 @@ fn parse_image(input: &Vec<String>, width: usize, height: usize) -> SpaceImage {
         layers.push(SpaceImageLayer {
             width,
             height,
-            data
+            data,
         });
     }
 
     SpaceImage {
         width,
         height,
-        layers
+        layers,
     }
 }
 
@@ -104,14 +171,14 @@ mod tests {
                 SpaceImageLayer {
                     width,
                     height,
-                    data: vec![1,2,3,4,5,6]
+                    data: vec![1, 2, 3, 4, 5, 6],
                 },
                 SpaceImageLayer {
                     width,
                     height,
-                    data: vec![7,8,9,0,1,2]
+                    data: vec![7, 8, 9, 0, 1, 2],
                 }
-            ]
+            ],
         };
 
         let actual = parse_image(&input, width, height);
@@ -128,4 +195,14 @@ mod tests {
         assert_eq!(1, run_a(&input, width, height));
     }
 
+    #[test]
+    pub fn sample_input_0_b() {
+        let input = vec![String::from("0222112222120000")];
+        let width = 2;
+        let height = 2;
+
+        let expected = String::from("01\n10\n");
+
+        assert_eq!(expected, run_b(&input, width, height));
+    }
 }
