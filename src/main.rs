@@ -14,6 +14,7 @@ mod day04;
 mod day05;
 mod day06;
 mod day07;
+mod day08;
 
 mod advent_helper;
 mod intcode_computer;
@@ -88,6 +89,14 @@ fn main() {
 
         info!("Highest signal: {}", day07::run_a(&input));
         info!("Highest signal with feedback loop: {}", day07::run_b(&input));
+    }
+
+    if true {
+        info!("Starting day08");
+
+        let input = advent_helper::read_file_lines("resources/2019/day08.txt");
+
+        info!("Checksum: {}", day08::run_a(&input, 25, 6));
     }
 
     let elapsed = start.elapsed();
