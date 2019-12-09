@@ -1,11 +1,11 @@
 use permutohedron::Heap;
 use intcode_computer::IntCodeComputer;
 
-pub fn run_a(input: &Vec<String>) -> i32{
+pub fn run_a(input: &Vec<String>) -> i64 {
     let num_engines = 5;
     let mut phase_settings = vec![0,1,2,3,4];
 
-    let mut max_signal = std::i32::MIN;
+    let mut max_signal = std::i64::MIN;
     let mut best_permutation = vec![];
 
     let permutations = Heap::new(&mut phase_settings);
@@ -33,11 +33,11 @@ pub fn run_a(input: &Vec<String>) -> i32{
     max_signal
 }
 
-pub fn run_b(input: &Vec<String>) -> i32 {
+pub fn run_b(input: &Vec<String>) -> i64 {
     let num_engines = 5;
     let mut phase_settings = vec![5,6,7,8,9];
 
-    let mut max_signal = std::i32::MIN;
+    let mut max_signal = std::i64::MIN;
     let mut best_permutation = vec![];
 
     let permutations = Heap::new(&mut phase_settings);
@@ -55,7 +55,7 @@ pub fn run_b(input: &Vec<String>) -> i32 {
         }
 
         let mut engine_input = 0;
-        let mut last_output = std::i32::MIN;
+        let mut last_output = std::i64::MIN;
         let mut halted = false;
 
         while !halted {

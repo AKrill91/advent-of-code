@@ -201,7 +201,7 @@ mod tests {
         let width = 2;
         let height = 2;
 
-        let expected = String::from("01\n10\n");
+        let expected = String::from(".@\n@.\n");
 
         assert_eq!(expected, run_b(&input, width, height));
     }

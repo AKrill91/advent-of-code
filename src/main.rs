@@ -15,6 +15,7 @@ mod day05;
 mod day06;
 mod day07;
 mod day08;
+mod day09;
 
 mod advent_helper;
 mod intcode_computer;
@@ -26,7 +27,9 @@ fn main() {
 
     let start = Instant::now();
 
-    if true {
+    let days_to_run = vec![9];
+
+    if days_to_run.contains(&1) {
         info!("Starting day01");
         let input = advent_helper::read_file_lines("resources/2019/day01.txt");
 
@@ -35,7 +38,7 @@ fn main() {
 
     }
 
-    if true {
+    if days_to_run.contains(&2) {
         info!("Starting day02");
         let input = advent_helper::read_file_lines("resources/2019/day02.txt");
 
@@ -46,7 +49,7 @@ fn main() {
         info!("{}, {} ({}) result in {}", inputs.0, inputs.1, result, target);
     }
 
-    if true {
+    if days_to_run.contains(&3) {
         info!("Starting day03");
         let input = advent_helper::read_file_lines("resources/2019/day03.txt");
 
@@ -56,7 +59,7 @@ fn main() {
         info!("Closest intersection (along wire) is {} away", distance);
     }
 
-    if true {
+    if days_to_run.contains(&4) {
         info!("Starting day04");
         let input = advent_helper::read_file_lines("resources/2019/day04.txt");
 
@@ -66,7 +69,7 @@ fn main() {
         info!("{} passwords are valid with more strict requirements", num_valid);
     }
 
-    if true {
+    if days_to_run.contains(&5) {
         info!("Starting day05");
         let input = advent_helper::read_file_lines("resources/2019/day05.txt");
 
@@ -74,7 +77,7 @@ fn main() {
         info!("Outputs: {:?}", day05::run_b(&input));
     }
 
-    if true {
+    if days_to_run.contains(&6) {
         info!("Starting day06");
         let input = advent_helper::read_file_lines("resources/2019/day06.txt");
 
@@ -82,7 +85,7 @@ fn main() {
         info!("Number of orbital assists needed: {}", day06::run_b(&input));
     }
 
-    if true {
+    if days_to_run.contains(&7) {
         info!("Starting day07");
 
         let input = advent_helper::read_file_lines("resources/2019/day07.txt");
@@ -91,13 +94,21 @@ fn main() {
         info!("Highest signal with feedback loop: {}", day07::run_b(&input));
     }
 
-    if true {
+    if days_to_run.contains(&8) {
         info!("Starting day08");
 
         let input = advent_helper::read_file_lines("resources/2019/day08.txt");
 
         info!("Checksum: {}", day08::run_a(&input, 25, 6));
         info!("Result: \n{}", day08::run_b(&input, 25, 6));
+    }
+
+    if days_to_run.contains(&9) {
+        info!("Starting day09");
+
+        let input = advent_helper::read_file_lines("resources/2019/day09.txt");
+        info!("BOOST keycode: {}", day09::run_a(&input));
+        info!("Distress signal: {:?}", day09::run_b(&input));
     }
 
     let elapsed = start.elapsed();
