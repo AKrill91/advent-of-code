@@ -27,7 +27,9 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![9];
+    let days_to_run = vec![1,2,3, 4,5,6,7,8,9];
+
+    info!("Running days: {:?}", days_to_run);
 
     if days_to_run.contains(&1) {
         info!("Starting day01");
