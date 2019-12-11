@@ -27,3 +27,37 @@ pub fn read_file_bytes(filename: &str) -> Vec<u8> {
 
     buffer
 }
+
+pub fn gcd(a: i32, b: i32) -> i32 {
+    let mut remainder = 0;
+    let mut left = a;
+    let mut right = b;
+
+    while left != 0 {
+        remainder = right % left;
+        right = left;
+        left = remainder;
+    }
+
+    right
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    pub fn test_gcd_0() {
+        assert_eq!(3, gcd(3, 6));
+    }
+
+    #[test]
+    pub fn test_gcd_1() {
+        assert_eq!(1, gcd(3, 7));
+    }
+
+    #[test]
+    pub fn test_gcd_2() {
+        assert_eq!(5, gcd(5, 25));
+    }
+}
