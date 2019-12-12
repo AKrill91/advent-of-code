@@ -18,6 +18,7 @@ mod day07;
 mod day08;
 mod day09;
 mod day10;
+mod day11;
 
 mod advent_helper;
 mod intcode_computer;
@@ -29,7 +30,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![1,2,3, 4,5,6,7,8,9, 10];
+    let days_to_run = vec![1,2,3, 4,5,6,7,8,9,10,11];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -123,6 +124,13 @@ fn main() {
         info!("200th asteroid: {}", day10::run_b(&input));
     }
 
+    if days_to_run.contains(&11) {
+        info!("Starting day10");
+
+        let input = advent_helper::read_file_lines("resources/2019/day11.txt");
+        info!("Panels painted: {}", day11::run_a(&input));
+        info!("Registration Id: \n{}", day11::run_b(&input));
+    }
 
     let elapsed = start.elapsed();
 

@@ -313,6 +313,19 @@ impl IntCodeProgram {
         out
     }
 
+    pub fn latest_outputs(&self, count: usize) -> Vec<i64> {
+        let mut output = vec![];
+        let len = self.outputs.len();
+
+        if len >= count {
+            for i in (0..count).rev() {
+                output.push(self.outputs[len - i - 1]);
+            }
+        }
+
+        output
+    }
+
     fn lookup_value(&self, parameter: i64, mode: ParameterMode) -> i64 {
         match mode {
             ParameterMode::Position => { *self.intcodes.get(&parameter).unwrap_or(&UNINITIALIZED_MEMORY) }
