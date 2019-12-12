@@ -4,6 +4,7 @@ extern crate ego_tree;
 extern crate env_logger;
 #[macro_use]
 extern crate log;
+extern crate ordered_float;
 extern crate permutohedron;
 extern crate regex;
 
@@ -119,6 +120,7 @@ fn main() {
 
         let input = advent_helper::read_file_lines("resources/2019/day10.txt");
         info!("Max asteroids: {}", day10::run_a(&input));
+        info!("200th asteroid: {}", day10::run_b(&input));
     }
 
 
