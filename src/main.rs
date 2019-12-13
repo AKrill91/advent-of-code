@@ -4,6 +4,7 @@ extern crate ego_tree;
 extern crate env_logger;
 #[macro_use]
 extern crate log;
+extern crate nalgebra;
 extern crate ordered_float;
 extern crate permutohedron;
 extern crate regex;
@@ -19,6 +20,7 @@ mod day08;
 mod day09;
 mod day10;
 mod day11;
+mod day12;
 
 mod advent_helper;
 mod intcode_computer;
@@ -30,7 +32,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![1,2,3, 4,5,6,7,8,9,10,11];
+    let days_to_run = vec![1,2,3, 4,5,6,7,8,9,10,11,12];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -125,11 +127,18 @@ fn main() {
     }
 
     if days_to_run.contains(&11) {
-        info!("Starting day10");
+        info!("Starting day11");
 
         let input = advent_helper::read_file_lines("resources/2019/day11.txt");
         info!("Panels painted: {}", day11::run_a(&input));
         info!("Registration Id: \n{}", day11::run_b(&input));
+    }
+
+    if days_to_run.contains(&12) {
+        info!("Starting day12");
+
+        let input = advent_helper::read_file_lines("resources/2019/day12.txt");
+        info!("Total energy: {}", day12::run_a(&input));
     }
 
     let elapsed = start.elapsed();
