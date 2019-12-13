@@ -9,6 +9,8 @@ extern crate ordered_float;
 extern crate permutohedron;
 extern crate regex;
 
+use std::time::Instant;
+
 mod day01;
 mod day02;
 mod day03;
@@ -21,18 +23,17 @@ mod day09;
 mod day10;
 mod day11;
 mod day12;
+mod day13;
 
 mod advent_helper;
 mod intcode_computer;
-
-use std::time::Instant;
 
 fn main() {
     env_logger::init();
 
     let start = Instant::now();
 
-    let days_to_run = vec![1,2,3,4,5,6,7,8,9,10,11,12];
+    let days_to_run = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -42,7 +43,6 @@ fn main() {
 
         info!("Require {} fuel, without fuel weight", day01::run_a(&input));
         info!("Require {} fuel, with fuel weight", day01::run_b(&input));
-
     }
 
     if days_to_run.contains(&2) {
@@ -140,6 +140,14 @@ fn main() {
         let input = advent_helper::read_file_lines("resources/2019/day12.txt");
         info!("Total energy: {}", day12::run_a(&input));
         info!("Cycle repeats every {} steps", day12::run_b(&input));
+    }
+
+    if days_to_run.contains(&13) {
+        info!("Starting day12");
+
+        let input = advent_helper::read_file_lines("resources/2019/day13.txt");
+        info!("Total of {} block tiles", day13::run_a(&input));
+        info!("Final score: {}", day13::run_b(&input));
     }
 
     let elapsed = start.elapsed();

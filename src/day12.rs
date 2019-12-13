@@ -43,10 +43,6 @@ impl Velocity {
         self.z += velocity.z;
     }
 
-    pub fn is_zero(&self) -> bool {
-        self.x == 0 && self.y == 0 && self.z == 0
-    }
-
     pub fn index(&self, index: usize) -> i32 {
         match index {
             0 => self.x,
@@ -144,7 +140,6 @@ fn parse_input(input: &Vec<String>) -> Vec<Position> {
     let mut moons = vec![];
 
     let moon_pattern = Regex::new(r"<x=(-?\d{1,5}), y=(-?\d{1,5}), z=(-?\d{1,5})>").unwrap();
-    let mut line_num = 0;
 
     assert_eq!(input.len(), 4);
 
@@ -162,8 +157,6 @@ fn parse_input(input: &Vec<String>) -> Vec<Position> {
                 z: captures.get(3).unwrap().as_str().parse::<i32>().unwrap(),
             }
         );
-
-        line_num += 1;
     }
 
     moons

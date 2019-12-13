@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashMap, HashSet};
 
 const UNINITIALIZED_MEMORY: i64 = 0;
 
@@ -88,7 +88,7 @@ pub struct IntCodeProgram {
     position: i64,
     outputs: Vec<i64>,
     halted: bool,
-    relative_base: i64
+    relative_base: i64,
 }
 
 impl IntCodeComputer {
@@ -111,7 +111,7 @@ impl IntCodeComputer {
             position: 0,
             outputs: vec![],
             halted: false,
-            relative_base: 0
+            relative_base: 0,
         };
 
         program.run();
@@ -130,7 +130,24 @@ impl IntCodeComputer {
             position: 0,
             outputs: vec![],
             halted: false,
-            relative_base: 0
+            relative_base: 0,
+        }
+    }
+
+    pub fn start_with_adjustments(&self, instructions: &Vec<String>, adjustments: HashMap<i64, i64>) -> IntCodeProgram {
+        let mut intcodes = IntCodeComputer::parse_intcodes(instructions);
+
+        for adjustment in adjustments {
+            intcodes.insert(adjustment.0, adjustment.1);
+        }
+
+        IntCodeProgram {
+            unsupported_opcodes: self.unsupported_opcodes.clone(),
+            intcodes,
+            position: 0,
+            outputs: vec![],
+            halted: false,
+            relative_base: 0,
         }
     }
 
@@ -141,7 +158,7 @@ impl IntCodeComputer {
         for line in input {
             let parts = line.split(",");
             for part in parts {
-                intcodes.insert(position,part.parse::<i64>().unwrap());
+                intcodes.insert(position, part.parse::<i64>().unwrap());
                 position += 1;
             }
         }
@@ -151,7 +168,6 @@ impl IntCodeComputer {
 }
 
 impl IntCodeProgram {
-
     ///Runs until input is needed.
     pub fn run(&mut self) {
         while self.position < self.intcodes.len() as i64 {
@@ -208,7 +224,7 @@ impl IntCodeProgram {
                             1
                         } else {
                             0
-                        }
+                        },
                     );
                 }
                 OpCode::Equals => {
@@ -222,7 +238,7 @@ impl IntCodeProgram {
                             1
                         } else {
                             0
-                        }
+                        },
                     );
                 }
                 OpCode::AdjustBase => {
@@ -302,6 +318,10 @@ impl IntCodeProgram {
         return self.halted;
     }
 
+    pub fn get_outputs(&self) -> Vec<i64> {
+        self.outputs.clone()
+    }
+
     pub fn latest_output(&self) -> Option<i64> {
         let mut out = None;
         let len = self.outputs.len();
@@ -326,19 +346,23 @@ impl IntCodeProgram {
         output
     }
 
+    pub fn clear_outputs(&mut self) {
+        self.outputs.clear()
+    }
+
     fn lookup_value(&self, parameter: i64, mode: ParameterMode) -> i64 {
         match mode {
             ParameterMode::Position => { *self.intcodes.get(&parameter).unwrap_or(&UNINITIALIZED_MEMORY) }
             ParameterMode::Immediate => { parameter }
-            ParameterMode::Relative => { *self.intcodes.get(&(parameter + self.relative_base)).unwrap_or(&UNINITIALIZED_MEMORY)}
+            ParameterMode::Relative => { *self.intcodes.get(&(parameter + self.relative_base)).unwrap_or(&UNINITIALIZED_MEMORY) }
         }
     }
 
     fn write_value(&mut self, parameter: i64, mode: ParameterMode, value: i64) {
         match mode {
-            ParameterMode::Position => {self.intcodes.insert(parameter, value);}
-            ParameterMode::Immediate => {panic!("Attempt to write in immediate mode");}
-            ParameterMode::Relative => {self.intcodes.insert(parameter + self.relative_base, value);}
+            ParameterMode::Position => { self.intcodes.insert(parameter, value); }
+            ParameterMode::Immediate => { panic!("Attempt to write in immediate mode"); }
+            ParameterMode::Relative => { self.intcodes.insert(parameter + self.relative_base, value); }
         }
     }
 }
@@ -410,7 +434,7 @@ mod tests {
     pub fn sample_input_quine() {
         let instructions = vec![String::from("109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99")];
 
-        let expected: Vec<i64> = vec![109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99];
+        let expected: Vec<i64> = vec![109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99];
 
         let computer = IntCodeComputer::new(vec![]);
 
