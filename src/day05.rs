@@ -23,8 +23,4 @@ mod tests {
 
         assert_eq!(1, run_a(&input)[0]);
     }
-
-    pub fn sample_input_0_b() {
-        let input = vec![String::from("3,9,8,9,10,9,4,9,99,-1,8")];
-    }
 }

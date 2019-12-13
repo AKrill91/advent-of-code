@@ -13,8 +13,3 @@ pub fn run_b(input: &Vec<String>) -> Vec<i64> {
 
     output
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-}

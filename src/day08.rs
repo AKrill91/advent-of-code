@@ -13,7 +13,6 @@ impl SpaceImage {
 
         for y in 0..height {
             for x in 0..width {
-                let index = y * width + x;
                 let mut color = 2;
                 for layer in &self.layers  {
                     let col = layer.at_position(x, y);
@@ -59,10 +58,6 @@ impl SpaceImageLayer {
         }
 
         count
-    }
-
-    pub fn at_index(&self, index: usize) -> i32 {
-        self.data[index]
     }
 
     pub fn at_position(&self, x: usize, y: usize) -> i32 {
@@ -130,10 +125,10 @@ fn parse_image(input: &Vec<String>, width: usize, height: usize) -> SpaceImage {
 
     let mut position = 0;
 
-    for i in 0..num_layers {
+    for _ in 0..num_layers {
         let mut data = Vec::with_capacity(size);
 
-        for pos in 0..size {
+        for _ in 0..size {
             let c = &data_str[position..position + 1];
             data.push(c.parse::<i32>().unwrap());
             position += 1;

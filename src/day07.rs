@@ -15,7 +15,7 @@ pub fn run_a(input: &Vec<String>) -> i64 {
 
         for i in 0..num_engines {
             let setting = permutation[i];
-            let mut computer = IntCodeComputer::new(vec![]);
+            let computer = IntCodeComputer::new(vec![]);
 
             let signal = computer.run(input, vec![setting, engine_input]);
 
@@ -47,7 +47,7 @@ pub fn run_b(input: &Vec<String>) -> i64 {
 
         for i in 0..num_engines {
             let setting = permutation[i];
-            let mut computer = IntCodeComputer::new(vec![]);
+            let computer = IntCodeComputer::new(vec![]);
             let mut program = computer.start(input);
             program.run();
             program.input(setting);
@@ -55,13 +55,12 @@ pub fn run_b(input: &Vec<String>) -> i64 {
         }
 
         let mut engine_input = 0;
-        let mut last_output = std::i64::MIN;
         let mut halted = false;
 
         while !halted {
             for i in 0..num_engines {
                 debug!("Perm {:?} - Providing {} to engine {}", permutation,  engine_input, i);
-                let mut program = &mut programs[i];
+                let program = &mut programs[i];
 
                 program.input(engine_input);
 

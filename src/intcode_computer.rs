@@ -338,7 +338,7 @@ impl IntCodeProgram {
         match mode {
             ParameterMode::Position => {self.intcodes.insert(parameter, value);}
             ParameterMode::Immediate => {panic!("Attempt to write in immediate mode");}
-            ParameterMode::Relative => {self.intcodes.insert((parameter + self.relative_base), value);}
+            ParameterMode::Relative => {self.intcodes.insert(parameter + self.relative_base, value);}
         }
     }
 }

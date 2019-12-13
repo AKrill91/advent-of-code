@@ -29,7 +29,7 @@ pub fn read_file_bytes(filename: &str) -> Vec<u8> {
 }
 
 pub fn gcd(a: i32, b: i32) -> i32 {
-    let mut remainder = 0;
+    let mut remainder;
     let mut left = a;
     let mut right = b;
 

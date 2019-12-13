@@ -1,6 +1,5 @@
-use std::collections::{HashMap, BTreeMap};
+use std::collections::BTreeMap;
 use advent_helper::gcd;
-use std::cmp::{max, min};
 use ordered_float::OrderedFloat;
 
 #[derive(Eq, PartialEq, Debug)]

@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use intcode_computer::IntCodeComputer;
 
@@ -162,12 +162,4 @@ fn print(panels: &HashMap<Position, Panel>) -> String {
     }
 
     chars.into_iter().collect()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    pub fn sample_input_0_a() {}
 }
