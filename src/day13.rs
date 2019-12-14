@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use day13::TileId::Block;
 use intcode_computer::IntCodeComputer;
 
 struct Game {
@@ -52,7 +51,7 @@ impl Game {
 
     pub fn count_tiles_by_id(&self, look_for: TileId) -> i32 {
         self.tiles.values()
-            .filter(|tile| **tile == TileId::Block)
+            .filter(|tile| **tile == look_for)
             .count() as i32
     }
 }
@@ -107,8 +106,6 @@ pub fn run_b(input: &Vec<String>) -> i64 {
 
     program.clear_outputs();
 
-    let mut turn_number = 0;
-
     let mut num_blocks = game.count_tiles_by_id(TileId::Block);
 
     while num_blocks > 0 {
@@ -129,17 +126,8 @@ pub fn run_b(input: &Vec<String>) -> i64 {
 
         game.handle_updates(&outputs);
 
-        turn_number += 1;
         num_blocks = game.count_tiles_by_id(TileId::Block);
     }
 
     game.score
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    pub fn sample_input_0_a() {}
 }
