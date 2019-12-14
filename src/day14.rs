@@ -9,7 +9,7 @@ const FUEL_STR: &str = "FUEL";
 
 struct Quantity<'a> {
     ingredient: &'a str,
-    amount: i32,
+    amount: i64,
 }
 
 impl fmt::Debug for Quantity<'_> {
@@ -27,7 +27,7 @@ impl RecipeBook<'_> {
         let mut recipes = HashMap::new();
         recipes.insert(ORE_STR, Recipe::ore());
 
-        let mut recipe_inputs: HashMap<&str, HashMap<&str, i32>> = HashMap::new();
+        let mut recipe_inputs: HashMap<&str, HashMap<&str, i64>> = HashMap::new();
         let mut recipe_outputs: HashMap<&str, Quantity> = HashMap::new();
         let pattern = Regex::new(r"(\d{1,5}) ([A-Z]{1,9})").unwrap();
 
@@ -46,7 +46,7 @@ impl RecipeBook<'_> {
 
                         inputs.insert(
                             captures.get(2).unwrap().as_str(),
-                            captures.get(1).unwrap().as_str().parse::<i32>().unwrap(),
+                            captures.get(1).unwrap().as_str().parse::<i64>().unwrap(),
                         );
                     }
                 } else {
@@ -58,7 +58,7 @@ impl RecipeBook<'_> {
 
                     output = Quantity {
                         ingredient: captures.get(2).unwrap().as_str(),
-                        amount: captures.get(1).unwrap().as_str().parse::<i32>().unwrap(),
+                        amount: captures.get(1).unwrap().as_str().parse::<i64>().unwrap(),
                     };
                 }
 
@@ -153,7 +153,7 @@ impl<'a> Recipe<'a> {
         self.output.ingredient
     }
 
-    pub fn amount_required(&self, ingredient: &str) -> i32 {
+    pub fn amount_required(&self, ingredient: &str) -> i64 {
         let input: Vec<&Quantity<'a>> = self.inputs.iter()
             .filter(|qty| qty.ingredient == ingredient)
             .collect();
@@ -187,33 +187,89 @@ impl<'a> Recipe<'a> {
     }
 }
 
-pub fn run_a(input: &Vec<String>) -> i32 {
+pub fn run_a(input: &Vec<String>) -> i64 {
     let recipe_book = RecipeBook::new(input);
 
-    let basic_ingredients: Vec<&str> = recipe_book.get_basic_ingredients();
+    info!("Found {} recipes", recipe_book.num_recipes());
 
-    info!("Found {} recipes and {} basic ingredients: {:?}", recipe_book.num_recipes(), basic_ingredients.len(), basic_ingredients);
+    go_shopping(&recipe_book, 1).0
+}
 
+pub fn run_b(input: &Vec<String>) -> i64 {
+    let recipe_book = RecipeBook::new(input);
+    info!("Found {} recipes", recipe_book.num_recipes());
+
+    let (ore_per_fuel, leftovers) = go_shopping(&recipe_book, 1);
+
+    info!("{} ore per fuel, leftovers: {:?} ", ore_per_fuel, leftovers);
+
+    let ore_goal = 1_000_000_000_000 as i64;
+
+    let mut ore_per_cycle = -1;
+    let mut cycle_length = std::i64::MAX;
+
+    for i in 1..std::i64::MAX {
+        let (ore, leftovers) = go_shopping(&recipe_book, i);
+
+        if ore > ore_goal {
+            info!("Cycle uses more than 1 trillion ore");
+            return i - 1;
+        }
+
+        if leftovers.is_empty() {
+            ore_per_cycle = ore;
+            cycle_length = i;
+            break;
+        }
+    }
+
+    let num_cycles = ore_goal / ore_per_cycle;
+
+    info!("Cycle repeats every {} --- {} ore per cycle -- {} cycles", cycle_length, ore_per_cycle, num_cycles);
+
+    let ore_after_cycles = num_cycles * ore_per_cycle;
+    let leftover_ore = ore_goal - ore_after_cycles;
+    let into_next_cycle = leftover_ore as f64 / ore_per_cycle as f64;
+    let estimate = (num_cycles * cycle_length)  + (leftover_ore / ore_per_fuel);
+
+    info!("{} ore left over after cycles, estimating {}", leftover_ore, estimate);
+
+    let mut num_fuel = estimate;
+
+    for i in estimate..std::i64::MAX {
+        let (ore,_) = go_shopping(&recipe_book, i);
+
+        if ore > ore_goal {
+            num_fuel = i - 1;
+            break;
+        }
+    }
+
+    num_fuel
+}
+
+fn go_shopping<'a>(recipe_book: &'a RecipeBook, fuel_needed: i64) -> (i64, HashMap<&'a str, i64>) {
     let fuel_recipe = recipe_book.get_fuel_recipe();
 
     debug!("Fuel recipe: {:?}", fuel_recipe);
 
     let mut shopping_list = HashMap::new();
-    shopping_list.insert(FUEL_STR, 1);
+    shopping_list.insert(FUEL_STR, fuel_needed);
 
     let mut ore_needed = 0;
+    let mut leftovers = HashMap::new();
 
     for level in (1..recipe_book.get_max_level() + 1).rev() {
         let recipes = recipe_book.recipes_for_level(level);
 
-        info!("{} level {} recipes - {:?}", recipes.len(), level, recipes);
+        debug!("{} level {} recipes", recipes.len(), level);
 
         for recipe in recipes {
             let ingredient = recipe.ingredient();
             let amount_needed = shopping_list.get(ingredient);
 
             if amount_needed.is_none() {
-                info!("Don't need to make any {}", ingredient);
+                debug!("Don't need to make any {}", ingredient);
                 continue;
             }
 
@@ -228,6 +284,12 @@ pub fn run_a(input: &Vec<String>) -> i32 {
                     (amount_needed / amount_per_synth) + 1
                 }
             };
+
+            let leftover = (num_synths * amount_per_synth) - amount_needed;
+
+            if leftover > 0 {
+                *leftovers.entry(ingredient).or_insert(0) += leftover;
+            }
 
             debug!("{} synths needed", num_synths);
 
@@ -247,11 +309,7 @@ pub fn run_a(input: &Vec<String>) -> i32 {
         }
     }
 
-    ore_needed
-}
-
-pub fn run_b(input: &Vec<String>) -> i32 {
-    0
+    (ore_needed, leftovers)
 }
 
 
@@ -261,8 +319,6 @@ mod tests {
 
     #[test]
     pub fn sample_input_0_a() {
-        let _ = env_logger::builder().is_test(true).try_init();
-
         let input = vec![
             String::from("10 ORE => 10 A"),
             String::from("1 ORE => 1 B"),
@@ -350,5 +406,74 @@ mod tests {
         ];
 
         assert_eq!(2210736, run_a(&input));
+    }
+
+    #[test]
+    pub fn sample_input_2_b() {
+        let _ = env_logger::builder().is_test(true).try_init();
+
+        let input = vec![
+            String::from("157 ORE => 5 NZVS"),
+            String::from("165 ORE => 6 DCFZ"),
+            String::from("44 XJWVT, 5 KHKGT, 1 QDVJ, 29 NZVS, 9 GPVTF, 48 HKGWZ => 1 FUEL"),
+            String::from("12 HKGWZ, 1 GPVTF, 8 PSHF => 9 QDVJ"),
+            String::from("179 ORE => 7 PSHF"),
+            String::from("177 ORE => 5 HKGWZ"),
+            String::from("7 DCFZ, 7 PSHF => 2 XJWVT"),
+            String::from("165 ORE => 2 GPVTF"),
+            String::from("3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT"),
+        ];
+
+        assert_eq!(82892753, run_b(&input));
+    }
+
+    #[test]
+    pub fn sample_input_3_b() {
+        let _ = env_logger::builder().is_test(true).try_init();
+
+        let input = vec![
+            String::from("2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG"),
+            String::from("17 NVRVD, 3 JNWZP => 8 VPVL"),
+            String::from("53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL"),
+            String::from("22 VJHF, 37 MNCFX => 5 FWMGM"),
+            String::from("139 ORE => 4 NVRVD"),
+            String::from("144 ORE => 7 JNWZP"),
+            String::from("5 MNCFX, 7 RFSQX, 2 FWMGM, 2 VPVL, 19 CXFTF => 3 HVMC"),
+            String::from("5 VJHF, 7 MNCFX, 9 VPVL, 37 CXFTF => 6 GNMV"),
+            String::from("145 ORE => 6 MNCFX"),
+            String::from("1 NVRVD => 8 CXFTF"),
+            String::from("1 VJHF, 6 MNCFX => 4 RFSQX"),
+            String::from("176 ORE => 6 VJHF"),
+        ];
+
+        assert_eq!(5586022, run_b(&input));
+    }
+
+    #[test]
+    #[ignore]
+    pub fn sample_input_4_b() {
+        let _ = env_logger::builder().is_test(true).try_init();
+
+        let input = vec![
+            String::from("171 ORE => 8 CNZTR"),
+            String::from("7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL"),
+            String::from("114 ORE => 4 BHXH"),
+            String::from("14 VRPVC => 6 BMBT"),
+            String::from("6 BHXH, 18 KTJDG, 12 WPTQ, 7 PLWSL, 31 FHTLT, 37 ZDVW => 1 FUEL"),
+            String::from("6 WPTQ, 2 BMBT, 8 ZLQW, 18 KTJDG, 1 XMNCP, 6 MZWV, 1 RJRHP => 6 FHTLT"),
+            String::from("15 XDBXC, 2 LTCX, 1 VRPVC => 6 ZLQW"),
+            String::from("13 WPTQ, 10 LTCX, 3 RJRHP, 14 XMNCP, 2 MZWV, 1 ZLQW => 1 ZDVW"),
+            String::from("5 BMBT => 4 WPTQ"),
+            String::from("189 ORE => 9 KTJDG"),
+            String::from("1 MZWV, 17 XDBXC, 3 XCVML => 2 XMNCP"),
+            String::from("12 VRPVC, 27 CNZTR => 2 XDBXC"),
+            String::from("15 KTJDG, 12 BHXH => 5 XCVML"),
+            String::from("3 BHXH, 2 VRPVC => 7 MZWV"),
+            String::from("121 ORE => 7 VRPVC"),
+            String::from("7 XCVML => 6 RJRHP"),
+            String::from("5 BHXH, 4 VRPVC => 5 LTCX"),
+        ];
+
+        assert_eq!(460664, run_b(&input));
     }
 }

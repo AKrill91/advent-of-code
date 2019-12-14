@@ -34,7 +34,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![14];
+    let days_to_run = vec![1,2,3,4,5,6,7,8,9,10,11,12,14];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -156,6 +156,7 @@ fn main() {
 
         let input = advent_helper::read_file_lines("resources/2019/day14.txt");
         info!("Total of {} ore required for a single fuel", day14::run_a(&input));
+        info!("Total of {} fuel for one trillion ore", day14::run_b(&input));
     }
 
     let elapsed = start.elapsed();
