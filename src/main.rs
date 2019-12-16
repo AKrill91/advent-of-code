@@ -25,6 +25,7 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day16;
 
 mod advent_helper;
 mod intcode_computer;
@@ -34,7 +35,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![1,2,3,4,5,6,7,8,9,10,11,12,14];
+    let days_to_run = vec![1,2,3,4,5,6,7,8,9,10,11,12,16];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -157,6 +158,14 @@ fn main() {
         let input = advent_helper::read_file_lines("resources/2019/day14.txt");
         info!("Total of {} ore required for a single fuel", day14::run_a(&input));
         info!("Total of {} fuel for one trillion ore", day14::run_b(&input));
+    }
+
+    if days_to_run.contains(&16) {
+        info!("Starting day16");
+
+        let input = advent_helper::read_file_lines("resources/2019/day16.txt");
+        let output = day16::run_a(&input);
+        info!("First 8 digits are {:?}", output);
     }
 
     let elapsed = start.elapsed();
