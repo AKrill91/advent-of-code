@@ -176,6 +176,7 @@ fn main() {
 
         let input = advent_helper::read_file_lines("resources/2019/day17.txt");
         info!("Alignment parameter sum: {}", day17::run_a(&input));
+        info!("{} dust collected", day17::run_b(&input));
     }
 
     let elapsed = start.elapsed();

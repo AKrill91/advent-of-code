@@ -17,28 +17,28 @@ impl Point {
     pub fn left(&self) -> Point {
         Point {
             x: self.x - 1,
-            y: self.y
+            y: self.y,
         }
     }
 
     pub fn right(&self) -> Point {
         Point {
             x: self.x + 1,
-            y: self.y
+            y: self.y,
         }
     }
 
     pub fn up(&self) -> Point {
         Point {
             x: self.x,
-            y: self.y - 1
+            y: self.y - 1,
         }
     }
 
     pub fn down(&self) -> Point {
         Point {
             x: self.x,
-            y: self.y + 1
+            y: self.y + 1,
         }
     }
 }
@@ -179,8 +179,6 @@ pub fn run_a(input: &Vec<String>) -> i32 {
 
     let output = CameraOutput::parse(&program.get_outputs());
 
-    info!("Output:\n{}", output.render());
-
     let intersections = output.get_intersections();
 
     info!("Found {} intersections", intersections.len());
@@ -190,6 +188,41 @@ pub fn run_a(input: &Vec<String>) -> i32 {
         .sum()
 }
 
-pub fn run_b(input: &Vec<String>) -> i32 {
-    0
+pub fn run_b(input: &Vec<String>) -> i64 {
+    let mut adjustments = HashMap::new();
+    adjustments.insert(0, 2);
+    let computer = IntCodeComputer::new(vec![]);
+    let mut program = computer.start_with_adjustments(input, adjustments);
+    program.run();
+
+    let main_routine = chars_to_i64("A,A,B,C,A,C,A,B,C,B\n");
+    let function_a = chars_to_i64("R,12,L,8,R,6\n");
+    let function_b = chars_to_i64("R,12,L,6,R,6,R,8,R,6\n");
+    let function_c = chars_to_i64("L,8,R,8,R,6,R,12\n");
+
+    let inputs = vec![
+        main_routine,
+        function_a,
+        function_b,
+        function_c,
+        chars_to_i64("n\n")
+    ];
+
+    for input in inputs {
+        for i in input {
+            program.input(i);
+        }
+    }
+
+    program.latest_output().unwrap()
+}
+
+fn chars_to_i64(input: &str) -> Vec<i64> {
+    let mut out = vec![];
+
+    for c in input.chars() {
+        out.push(c as i64);
+    }
+
+    out
 }
