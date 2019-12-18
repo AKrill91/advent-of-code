@@ -26,6 +26,7 @@ mod day12;
 mod day13;
 mod day14;
 mod day16;
+mod day17;
 
 mod advent_helper;
 mod intcode_computer;
@@ -35,7 +36,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![1,2,3,4,5,6,7,8,9,10,11,12,16];
+    let days_to_run = vec![1,2,3,4,5,6,7,8,9,10,11,12,16,17];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -168,6 +169,13 @@ fn main() {
         info!("First 8 digits are {:?}", output);
         let output = day16::run_b(&input);
         info!("Real message is  {:?}", output);
+    }
+
+    if days_to_run.contains(&17) {
+        info!("Starting day17");
+
+        let input = advent_helper::read_file_lines("resources/2019/day17.txt");
+        info!("Alignment parameter sum: {}", day17::run_a(&input));
     }
 
     let elapsed = start.elapsed();
