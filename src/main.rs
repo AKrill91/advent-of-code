@@ -166,6 +166,8 @@ fn main() {
         let input = advent_helper::read_file_lines("resources/2019/day16.txt");
         let output = day16::run_a(&input);
         info!("First 8 digits are {:?}", output);
+        let output = day16::run_b(&input);
+        info!("Real message is  {:?}", output);
     }
 
     let elapsed = start.elapsed();

@@ -2,8 +2,8 @@ pub fn run_a(input: &Vec<String>) -> [u32; 8] {
     run(input, 100)
 }
 
-pub fn run_b(input: &Vec<String>) -> i32 {
-    0
+pub fn run_b(input: &Vec<String>) -> [u32;8] {
+    run_2(input, 100)
 }
 
 pub fn run(input: &Vec<String>, num_phases: usize) -> [u32; 8] {
@@ -43,6 +43,42 @@ pub fn run(input: &Vec<String>, num_phases: usize) -> [u32; 8] {
         signal[5],
         signal[6],
         signal[7]
+    ]
+}
+
+pub fn run_2(input: &Vec<String>, num_phases: usize) -> [u32;8] {
+    let initial_signal = parse_string(input[0].as_str());
+    let mut signal = vec![];
+    for i in 0..10_000 {
+        signal.extend(initial_signal.iter().cloned());
+    }
+    let total_length = signal.len();
+    let offset = (signal[0] * 1_000_000 + signal[1] * 100_000 + signal[2] * 10_000 + signal[3] * 1_000 + signal[4] * 100 + signal[5] * 10 + signal[6]) as usize;
+    info!("Signal is {} digits long, offset is {}", total_length, offset);
+
+    for phase in 0..num_phases {
+        let mut sum = 0;
+
+        for i in offset..total_length {
+            sum += signal[i];
+        }
+
+        for i in offset..total_length {
+            let val = signal[i];
+            signal[i] = sum % 10;
+            sum -= val;
+        }
+    }
+
+    [
+        signal[offset + 0],
+        signal[offset + 1],
+        signal[offset + 2],
+        signal[offset + 3],
+        signal[offset + 4],
+        signal[offset + 5],
+        signal[offset + 6],
+        signal[offset + 7]
     ]
 }
 
@@ -131,5 +167,29 @@ mod tests {
         let expected: [u32; 8] = [5, 2, 4, 3, 2, 1, 3, 3];
 
         assert_eq!(expected, run_a(&input));
+    }
+
+    #[test]
+    pub fn sample_input_0_b() {
+        let input = vec![String::from("03036732577212944063491565474664")];
+        let expected: [u32; 8] = [8, 4, 4, 6, 2, 0, 2, 6];
+
+        assert_eq!(expected, run_b(&input));
+    }
+
+    #[test]
+    pub fn sample_input_1_b() {
+        let input = vec![String::from("02935109699940807407585447034323")];
+        let expected: [u32; 8] = [7, 8, 7, 2, 5, 2, 7, 0];
+
+        assert_eq!(expected, run_b(&input));
+    }
+
+    #[test]
+    pub fn sample_input_2_b() {
+        let input = vec![String::from("03081770884921959731165446850517")];
+        let expected: [u32; 8] = [5, 3, 5, 5, 3, 7, 3, 1];
+
+        assert_eq!(expected, run_b(&input));
     }
 }
