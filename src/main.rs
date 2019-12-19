@@ -27,6 +27,7 @@ mod day13;
 mod day14;
 mod day16;
 mod day17;
+mod day19;
 
 mod advent_helper;
 mod intcode_computer;
@@ -36,7 +37,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![1,2,3,4,5,6,7,8,9,10,11,12,16,17];
+    let days_to_run = vec![19];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -177,6 +178,13 @@ fn main() {
         let input = advent_helper::read_file_lines("resources/2019/day17.txt");
         info!("Alignment parameter sum: {}", day17::run_a(&input));
         info!("{} dust collected", day17::run_b(&input));
+    }
+
+    if days_to_run.contains(&19) {
+        info!("Starting day19");
+
+        let input = advent_helper::read_file_lines("resources/2019/day19.txt");
+        info!("Number of affected points: {}", day19::run_a(&input));
     }
 
     let elapsed = start.elapsed();
