@@ -17,106 +17,183 @@ impl Point {
     }
 }
 
-struct Key {
-    id: char,
-    position: Point,
-    collected: bool,
+#[derive(Debug, Eq, PartialEq, Copy, Clone)]
+enum MazeElement {
+    Entrance,
+    Empty,
+    Key { id: char },
+    Lock { id: char },
+    Wall,
 }
 
+impl MazeElement {
+    pub fn to_char(&self) -> char {
+        match self {
+            MazeElement::Entrance => '@',
+            MazeElement::Empty => ' ',
+            MazeElement::Key { id: c } => *c,
+            MazeElement::Lock { id: c } => *c,
+            MazeElement::Wall => '#',
+        }
+    }
+
+    pub fn is_node(&self) -> bool {
+        match self {
+            MazeElement::Entrance => true,
+            MazeElement::Empty => false,
+            MazeElement::Key { .. } => true,
+            MazeElement::Lock { .. } => false,
+            MazeElement::Wall => false,
+        }
+    }
+
+    pub fn is_wall(&self) -> bool {
+        match self {
+            MazeElement::Wall => true,
+            _ => false
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        match self {
+            MazeElement::Empty => true,
+            _ => false
+        }
+    }
+}
+
+#[derive(Debug)]
 struct Node {
-    position: Point
+    position: Point,
+    element: MazeElement,
 }
 
 struct Maze {
     entrance: Point,
-    walls: HashSet<Point>,
-    keys: HashMap<char, Key>,
-    locks: HashMap<char, Point>,
+    width: i64,
+    height: i64,
+    elements: HashMap<Point, MazeElement>,
+    nodes: HashMap<Point, Node>
 }
 
 impl Maze {
     fn parse(input: &Vec<String>) -> Maze {
         let mut entrance = Point::zero();
-        let mut walls = HashSet::new();
-        let mut keys = HashMap::new();
-        let mut locks = HashMap::new();
-
+        let mut elements = HashMap::new();
+        let mut width = 0;
         let mut y = 0;
 
         for line in input {
             let mut x = 0;
             for ch in line.chars() {
                 let point = Point { x, y };
-                match ch {
-                    '#' => { walls.insert(point); }
-                    '.' => {}
-                    '@' => { entrance = point; }
-                    c => {
-                        assert!(c.is_ascii_alphabetic());
-
-                        if c.is_ascii_lowercase() {
-                            keys.insert(
-                                c,
-                                Key {
-                                    id: c,
-                                    position: point,
-                                    collected: false,
-                                },
-                            );
-                        } else if c.is_ascii_uppercase() {
-                            locks.insert(c, point);
-                        } else {
-                            panic!();
-                        }
-                    }
-                }
+                let element = match ch {
+                    '#' => MazeElement::Wall,
+                    '.' => MazeElement::Empty,
+                    '@' => MazeElement::Entrance,
+                    c if c.is_ascii_lowercase() => MazeElement::Key { id: c },
+                    c if c.is_ascii_uppercase() => MazeElement::Lock { id: c },
+                    _ => panic!()
+                };
+                elements.insert(point, element);
                 x += 1;
+            }
+            if y == 0 {
+                width = x;
             }
             y += 1;
             x = 0;
         }
 
+        let width = width;
+        let height = y;
+//        let mut graph = Graph::new_undirected();
+        let mut nodes = HashMap::new();
+
+        info!("Width: {}, Height: {}", width, height);
+        info!("{:?}", elements);
+
+        for y in 0..height {
+            for x in 0..width {
+                let point = Point { x, y };
+                let element = elements.get(&point).unwrap();
+
+                if element.is_node() {
+                    nodes.insert(
+                        point,
+                        Node {
+                            position: point,
+                            element: *element,
+                        },
+                    );
+
+                    if element == &MazeElement::Entrance {
+                        entrance = point;
+                    }
+                } else if element.is_empty() {
+                    let north = Point { x: point.x, y: point.y - 1 };
+                    let east = Point { x: point.x + 1, y: point.y };
+                    let south = Point { x: point.x, y: point.y + 1 };
+                    let west = Point { x: point.x - 1, y: point.y };
+
+                    let north_south = elements.get(&north).map_or(false, |e| e.is_empty()) ||
+                        elements.get(&south).map_or(false, |e| e.is_empty());
+
+                    let east_west = elements.get(&east).map_or(false, |e| e.is_empty()) ||
+                        elements.get(&west).map_or(false, |e| e.is_empty());
+
+                    let intersection = north_south && east_west;
+
+                    if intersection {
+                        nodes.insert(
+                            point,
+                            Node {
+                                position: point,
+                                element: MazeElement::Empty
+                            }
+                        );
+                    }
+                }
+            }
+        }
+
+        info!("{:?}", nodes);
+
         Maze {
             entrance,
-            walls,
-            keys,
-            locks,
+            width,
+            height,
+            elements,
+            nodes
         }
     }
 
-    fn to_graph(&self) -> Graph<Node, i64> {
-        let mut out = Graph::new_undirected();
+    fn render(&self) -> String {
+        let mut chars = vec![];
 
-        let mut nodes = HashMap::new();
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let point = Point { x, y };
 
-        nodes.insert(
-            self.entrance,
-            out.add_node(
-                Node {
-                    position: self.entrance
+                let element = self.elements.get(&point).unwrap();
+
+                if element.is_empty() && self.nodes.contains_key(&point) {
+                    chars.push('.');
+                } else {
+                    chars.push(element.to_char());
                 }
-            ),
-        );
-
-        for (_, key) in self.keys {
-            nodes.insert(
-                key.position,
-                out.add_node(
-                    Node {
-                        position: key.position
-                    }
-                ),
-            );
+            }
+            chars.push('\n');
         }
 
-        out
+        chars.into_iter().collect()
     }
 }
 
 pub fn run_a(input: &Vec<String>) -> i32 {
     let mut maze = Maze::parse(input);
 
-    info!("Found {} walls, {} keys, and {} locks", maze.walls.len(), maze.keys.len(), maze.locks.len());
+    info!("\n{}", maze.render());
 
     0
 }
