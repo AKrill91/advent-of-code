@@ -72,13 +72,3 @@ fn chars_to_i64(input: &str) -> Vec<i64> {
 
     out
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    pub fn sample_input_0_a() {
-        let _ = env_logger::builder().is_test(true).try_init();
-    }
-}

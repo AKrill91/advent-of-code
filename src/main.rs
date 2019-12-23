@@ -29,6 +29,7 @@ mod day16;
 mod day17;
 mod day19;
 mod day21;
+mod day22;
 
 mod advent_helper;
 mod intcode_computer;
@@ -38,7 +39,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![21];
+    let days_to_run = vec![22];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -195,6 +196,13 @@ fn main() {
         let input = advent_helper::read_file_lines("resources/2019/day21.txt");
         info!("Hull damage walking: {}", day21::run_a(&input));
         info!("Hull damage running: {}", day21::run_b(&input));
+    }
+
+    if days_to_run.contains(&22) {
+        info!("Starting day22");
+
+        let input = advent_helper::read_file_lines("resources/2019/day22.txt");
+        info!("Card 2019 at index: {}", day22::run_a(&input));
     }
 
     let elapsed = start.elapsed();
