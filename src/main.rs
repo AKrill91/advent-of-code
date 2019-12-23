@@ -38,7 +38,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![1,2,3,4,5,6,7,8,9,10,11,12,16,17,19,21];
+    let days_to_run = vec![21];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -193,7 +193,8 @@ fn main() {
         info!("Starting day21");
 
         let input = advent_helper::read_file_lines("resources/2019/day21.txt");
-        info!("Hull damage: {}", day21::run_a(&input));
+        info!("Hull damage walking: {}", day21::run_a(&input));
+        info!("Hull damage running: {}", day21::run_b(&input));
     }
 
     let elapsed = start.elapsed();

@@ -1,10 +1,8 @@
-use intcode_computer::IntCodeComputer;
+use intcode_computer::{IntCodeComputer, IntCodeProgram};
 
 pub fn run_a(input: &Vec<String>) -> i64 {
     let computer = IntCodeComputer::new(vec![]);
     let mut program = computer.start(input);
-
-    program.run();
 
     let command = vec![
         chars_to_i64("NOT C T\n"),
@@ -15,15 +13,37 @@ pub fn run_a(input: &Vec<String>) -> i64 {
         chars_to_i64("WALK\n")
     ];
 
-    for input in command {
+    run(program, command)
+}
+
+pub fn run_b(input: &Vec<String>) -> i64 {
+    let computer = IntCodeComputer::new(vec![]);
+    let mut program = computer.start(input);
+
+    let command = vec![
+        chars_to_i64("NOT H T\n"),
+        chars_to_i64("OR C T\n"),
+        chars_to_i64("AND A T\n"),
+        chars_to_i64("AND B T\n"),
+        chars_to_i64("NOT T T\n"),
+        chars_to_i64("AND D T\n"),
+        chars_to_i64("OR T J\n"),
+        chars_to_i64("RUN\n")
+    ];
+
+    run(program, command)
+}
+
+fn run(mut program: IntCodeProgram, instructions: Vec<Vec<i64>>) -> i64 {
+    program.run();
+
+    for input in instructions {
         for i in input {
             program.input(i);
         }
     }
 
     let outputs = program.get_outputs();
-
-    info!("Outputs: {:?}", outputs);
 
     let mut chars = vec![];
     let mut output = 0;
@@ -41,10 +61,6 @@ pub fn run_a(input: &Vec<String>) -> i64 {
     info!("\n{}\n", rendered);
 
     output
-}
-
-pub fn run_b(input: &Vec<String>) -> i32 {
-    0
 }
 
 fn chars_to_i64(input: &str) -> Vec<i64> {
