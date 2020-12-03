@@ -13,6 +13,7 @@ use std::time::Instant;
 
 mod day01;
 mod day02;
+mod day03;
 
 mod advent_helper;
 
@@ -21,7 +22,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![2];
+    let days_to_run = vec![3];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -39,6 +40,14 @@ fn main() {
 
         info!("day02::run_a = {}", day02::run_a(&input));
         info!("day02::run_b = {}", day02::run_b(&input));
+    }
+
+    if days_to_run.contains(&3) {
+        info!("Starting day03");
+        let input = advent_helper::read_file_lines("resources/2020/day03.txt");
+
+        info!("day03::run_a = {}", day03::run_a(&input));
+        info!("day03::run_b = {}", day03::run_b(&input));
     }
 
     let elapsed = start.elapsed();
