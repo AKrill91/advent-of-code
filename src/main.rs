@@ -16,6 +16,7 @@ mod day02;
 mod day03;
 mod day04;
 mod day05;
+mod day06;
 
 mod advent_helper;
 
@@ -24,7 +25,7 @@ fn main() {
 
     let start = Instant::now();
 
-    let days_to_run = vec![5];
+    let days_to_run = vec![6];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -68,6 +69,13 @@ fn main() {
         info!("day05::run_b = {}", day05::run_b(&input));
     }
 
+    if days_to_run.contains(&6) {
+        info!("Starting day06");
+        let input = advent_helper::read_file_lines("resources/2020/day06.txt");
+
+        info!("day06::run_a = {}", day06::run_a(&input));
+        info!("day06::run_b = {}", day06::run_b(&input));
+    }
 
     let elapsed = start.elapsed();
 
