@@ -10,7 +10,7 @@ pub fn run_a(input: &Vec<String>) -> i64 {
 }
 
 pub fn run_b(input: &Vec<String>) -> i64 {
-    let mut rules = BagRules::from(input);
+    let rules = BagRules::from(input);
 
     rules.num_inside("shiny gold") as i64
 }

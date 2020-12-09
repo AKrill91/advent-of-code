@@ -12,7 +12,7 @@ const VALID_ECL: [&str; 7] = [
 ];
 
 pub fn run_a(input: &Vec<String>) -> i64 {
-    let mut passports = Passport::multiple_from(input);
+    let passports = Passport::multiple_from(input);
 
     passports.iter()
         .filter(|p| p.is_valid_basic())
@@ -20,7 +20,7 @@ pub fn run_a(input: &Vec<String>) -> i64 {
 }
 
 pub fn run_b(input: &Vec<String>) -> i64 {
-    let mut passports = Passport::multiple_from(input);
+    let passports = Passport::multiple_from(input);
 
     passports.iter()
         .filter(|p| p.is_valid())
