@@ -11,6 +11,7 @@ extern crate regex;
 
 use std::time::Instant;
 
+mod advent_helper;
 mod day01;
 mod day02;
 mod day03;
@@ -19,15 +20,14 @@ mod day05;
 mod day06;
 mod day07;
 mod day08;
-
-mod advent_helper;
+mod day09;
 
 fn main() {
     env_logger::init();
 
     let start = Instant::now();
 
-    let days_to_run = vec![8];
+    let days_to_run = vec![9];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -93,6 +93,14 @@ fn main() {
 
         info!("day08::run_a = {}", day08::run_a(&input));
         info!("day08::run_b = {}", day08::run_b(&input));
+    }
+
+    if days_to_run.contains(&9) {
+        info!("Starting day09");
+        let input = advent_helper::read_file_lines("resources/2020/day09.txt");
+
+        info!("day09::run_a = {}", day09::run_a(&input));
+        info!("day09::run_b = {}", day09::run_b(&input));
     }
 
     let elapsed = start.elapsed();

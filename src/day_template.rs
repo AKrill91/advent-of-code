@@ -1,8 +1,16 @@
-pub fn run_a(input: &Vec<String>) -> i64 {
+pub fn run_a<'a, I, J>(input: I) -> i64
+    where
+        I: IntoIterator<Item=&'a J>,
+        J: AsRef<str> + 'a + ?Sized
+{
     0
 }
 
-pub fn run_b(input: &Vec<String>) -> i64 {
+pub fn run_b<'a, I, J>(input: I) -> i64
+    where
+        I: IntoIterator<Item=&'a J>,
+        J: AsRef<str> + 'a + ?Sized
+{
     0
 }
 
