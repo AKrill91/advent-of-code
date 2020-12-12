@@ -23,13 +23,14 @@ mod day08;
 mod day09;
 mod day10;
 mod day11;
+mod day12;
 
 fn main() {
     env_logger::init();
 
     let start = Instant::now();
 
-    let days_to_run = vec![11];
+    let days_to_run = vec![12];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -119,6 +120,14 @@ fn main() {
 
         info!("day11::run_a = {}", day11::run_a(&input));
         info!("day11::run_b = {}", day11::run_b(&input));
+    }
+
+    if days_to_run.contains(&12) {
+        info!("Starting day12");
+        let input = advent_helper::read_file_lines("resources/2020/day12.txt");
+
+        info!("day12::run_a = {}", day12::run_a(&input));
+        info!("day12::run_b = {}", day12::run_b(&input));
     }
 
     let elapsed = start.elapsed();
