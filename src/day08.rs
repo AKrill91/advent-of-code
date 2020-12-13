@@ -152,7 +152,7 @@ impl Execution {
         let instruction = self.program.instructions[counter as usize];
 
         self.execute(instruction);
-        let mut entry = self.instruction_counts.entry(counter).or_insert(0);
+        let entry = self.instruction_counts.entry(counter).or_insert(0);
         *entry += 1;
 
         if self.instruction_counter == counter {

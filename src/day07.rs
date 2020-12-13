@@ -38,13 +38,6 @@ impl From<&Vec<String>> for BagRules {
 }
 
 impl BagRules {
-    pub fn colors(&self) -> Vec<&str> {
-        self.bags.values()
-            .flat_map(|b| b.contents.keys())
-            .map(|s| s.as_str())
-            .collect()
-    }
-
     pub fn num_containing(&self, color: &str) -> usize {
         let mut count = 0;
 

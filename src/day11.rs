@@ -1,5 +1,4 @@
 use std::cmp::{max, min};
-use std::collections::hash_map::DefaultHasher;
 
 pub fn run_a<'a, I, J>(input: I) -> i64
     where
@@ -245,10 +244,6 @@ impl From<char> for FerryPosition {
 impl FerryPosition {
     pub fn is_floor(&self) -> bool {
         *self == FerryPosition::Floor
-    }
-
-    pub fn is_empty_seat(&self) -> bool {
-        *self == FerryPosition::EmptySeat
     }
 
     pub fn is_occupied_seat(&self) -> bool {

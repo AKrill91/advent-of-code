@@ -17,7 +17,7 @@ pub fn read_file_lines(filename: &str) -> Vec<String> {
     lines
 }
 
-pub fn read_file_bytes(filename: &str) -> Vec<u8> {
+pub fn _read_file_bytes(filename: &str) -> Vec<u8> {
     debug!("Reading bytes from {}", filename);
     let mut f = File::open(filename).expect("Error opening file");
     let mut buffer = Vec::new();
@@ -28,7 +28,7 @@ pub fn read_file_bytes(filename: &str) -> Vec<u8> {
     buffer
 }
 
-pub fn gcd(a: i32, b: i32) -> i32 {
+pub fn _gcd(a: i32, b: i32) -> i32 {
     let mut remainder;
     let mut left = a;
     let mut right = b;
