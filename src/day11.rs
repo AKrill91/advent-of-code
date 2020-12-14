@@ -289,10 +289,6 @@ mod tests {
         let adj = ferry.get_adjacent_positions(1, 1);
         assert_eq!(8, adj.len());
         assert_eq!(4, adj.iter()
-            .filter(|p| p.is_empty_seat())
-            .count()
-        );
-        assert_eq!(4, adj.iter()
             .filter(|p| p.is_floor())
             .count()
         );
@@ -340,10 +336,6 @@ mod tests {
         );
         assert_eq!(2, adj.iter()
             .filter(|p| p.is_floor())
-            .count()
-        );
-        assert_eq!(2, adj.iter()
-            .filter(|p| p.is_empty_seat())
             .count()
         );
     }
