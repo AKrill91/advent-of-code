@@ -4,6 +4,8 @@ extern crate ego_tree;
 extern crate env_logger;
 #[macro_use]
 extern crate log;
+#[macro_use]
+extern crate lazy_static;
 extern crate num_integer;
 extern crate ordered_float;
 extern crate permutohedron;
@@ -30,13 +32,14 @@ mod day15;
 mod day16;
 mod day17;
 mod day18;
+mod day19;
 
 fn main() {
     env_logger::init();
 
     let start = Instant::now();
 
-    let days_to_run = vec![18];
+    let days_to_run = vec![19];
 
     info!("Running days: {:?}", days_to_run);
 
@@ -182,6 +185,14 @@ fn main() {
 
         info!("day18::run_a = {}", day18::run_a(&input));
         info!("day18::run_b = {}", day18::run_b(&input));
+    }
+
+    if days_to_run.contains(&19) {
+        info!("Starting day19");
+        let input = advent_helper::read_file_lines("resources/2020/day19.txt");
+
+        info!("day19::run_a = {}", day19::run_a(&input));
+        info!("day19::run_b = {}", day19::run_b(&input));
     }
 
     let elapsed = start.elapsed();
