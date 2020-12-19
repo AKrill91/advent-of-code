@@ -360,6 +360,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     pub fn sample_input_0_b() {
         let _ = env_logger::builder().is_test(true).try_init();
 
