@@ -1,15 +1,11 @@
 [package]
+edition = "2021"
 name = "advent-of-code"
 version = "0.1.0"
 authors = ["Austin Krill <akrill91@gmail.com>"]
 
 [dependencies]
-chrono = "0.4.6"
-ego-tree = "0.6.2"
-env_logger = "0.7.1"
-lazy_static = "1.4.0"
-log = "0.4.0"
-num-integer = "0.1.41"
-ordered-float = "1.0.2"
-permutohedron = "0.2.4"
-regex = "1.1.0"
+chrono =  "0.4"
+env_logger = "0.9"
+log = "0.4"
+regex = "1.5"

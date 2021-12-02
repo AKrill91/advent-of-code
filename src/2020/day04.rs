@@ -346,7 +346,7 @@ mod tests {
             String::from("pid:545766238 ecl:hzl"),
             String::from("eyr:2022"),
             String::from(""),
-            String::from("iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719"),
+            String::from("iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:year2021 pid:093154719"),
         ];
 
         let passports = Passport::multiple_from(&input);
