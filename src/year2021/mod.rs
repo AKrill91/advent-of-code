@@ -1,9 +1,34 @@
-mod day01;
+use std::time::Instant;
+use crate::{day_run_unknown, DayRun};
 
-pub fn run() {
-    let input = crate::advent_helper::read_file_lines("resources/2021/day01.txt");
-    let a = day01::run_a(&input);
-    info!("Day01::a -> {:?}", a);
-    let b = day01::run_b(&input);
-    info!("Day01::b -> {:?}", b);
+mod day01;
+mod day02;
+
+pub fn run(year: i32, days_to_run: &Vec<i32>) {
+    days_to_run.iter()
+        .for_each(|day| run_day(year, *day));
+}
+
+fn run_day(year: i32, day: i32) {
+    let funcs: (DayRun, DayRun) = match day {
+        1 => (day01::run_a, day01::run_b),
+        2 => (day02::run_a, day02::run_b),
+        _ => (day_run_unknown, day_run_unknown)
+    };
+
+    info!("{:04}:{:02} - Starting", year, day);
+    let day_start = Instant::now();
+
+    let resource_file = format!("resources/{:04}/day{:02}.txt", year, day);
+    let input = crate::advent_helper::read_file_lines(&resource_file);
+
+    for (letter, func) in vec![("a", funcs.0), ("b", funcs.1)] {
+        info!("{:04}:{:02}:{} - Starting", year, day, letter);
+        let letter_start = Instant::now();
+        let letter_result = func(day, &input);
+        log::info!("{:04}:{:02}:{} - Got '{}'", year, day, letter, letter_result);
+        info!("{:04}:{:02}:{} - Took {:?}", year, day, letter, letter_start.elapsed());
+    }
+
+    info!("{:04}:{:02} - Took {:?}", year, day, day_start.elapsed());
 }

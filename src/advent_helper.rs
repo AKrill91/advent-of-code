@@ -4,6 +4,7 @@ use std::io::BufReader;
 use std::io::Read;
 
 pub fn read_file_lines(filename: &str) -> Vec<String> {
+    debug!("Reading file {}", filename);
     let mut lines = Vec::new();
 
     let f = File::open(filename).expect("Error opening file");

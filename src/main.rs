@@ -6,26 +6,52 @@ extern crate log;
 #[macro_use]
 extern crate regex;
 
+use std::borrow::Borrow;
+use std::collections::HashMap;
+use std::fmt::Display;
 use std::time::Instant;
 
 mod advent_helper;
 mod year2021;
+
+pub type YearRun = fn(i32, &Vec<i32>) -> ();
+pub type DayRun = fn(i32, &Vec<String>) -> String;
+
+fn year_run_unknown(year: i32, _: &Vec<i32>) {
+    log::warn!("Unknown year {:04}", year);
+}
+
+pub fn day_run_unknown(day: i32, _: &Vec<String>) -> String {
+    format!("unknown day {:02}", day)
+}
 
 fn main() {
     env_logger::init();
 
     let start = Instant::now();
 
-    let years_to_run = vec![2021];
-    info!("Running years: {:?}", years_to_run);
+    let run_these: HashMap<i32, Vec<i32>> = vec![
+        (2021 , vec![2])
+    ]
+        .into_iter()
+        .collect();
 
-    if years_to_run.contains(&2021) {
-        let year_start = Instant::now();
+    run_these.iter()
+        .for_each(|(year, days)| run_year(*year, days));
 
-        year2021::run();
+    info!("Overall - took {:?}", start.elapsed());
+}
 
-        info!("Year 2021 took {:?}", year_start.elapsed());
-    }
+fn run_year(year: i32, days: &Vec<i32>) {
+    let func: YearRun = match year {
+        2021 => year2021::run,
+        _ => year_run_unknown
+    };
 
-    info!("{:?} elapsed", start.elapsed());
+    info!("{:04} - Starting", year);
+    let year_start = Instant::now();
+
+    func(year, days);
+
+    info!("{:04} - Took {:?}", year, year_start.elapsed());
 }
