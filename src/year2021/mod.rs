@@ -3,6 +3,7 @@ use crate::{day_run_unknown, DayRun};
 
 mod day01;
 mod day02;
+mod day04;
 
 pub fn run(year: i32, days_to_run: &Vec<i32>) {
     days_to_run.iter()
@@ -13,6 +14,7 @@ fn run_day(year: i32, day: i32) {
     let funcs: (DayRun, DayRun) = match day {
         1 => (day01::run_a, day01::run_b),
         2 => (day02::run_a, day02::run_b),
+        4 => (day04::run_a, day04::run_b),
         _ => (day_run_unknown, day_run_unknown)
     };
 
