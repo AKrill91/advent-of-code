@@ -1,6 +1,4 @@
 use std::collections::HashSet;
-use std::fmt::format;
-use std::hash::Hash;
 use std::slice::Iter;
 
 struct Board {
@@ -39,7 +37,7 @@ impl Board {
     }
 }
 
-pub fn run_a(_: i32, input: &Vec<String>) -> String {
+pub fn run_a(_: i32, input: &[String]) -> String {
     let mut iter = input.iter();
 
     let numbers = parse_numbers(iter.next().unwrap().as_str());
@@ -66,10 +64,10 @@ pub fn run_a(_: i32, input: &Vec<String>) -> String {
         }
     }
 
-    format!("I shouldn't get here")
+    "I shouldn't get here".to_string()
 }
 
-pub fn run_b(_: i32, input: &Vec<String>) -> String {
+pub fn run_b(_: i32, input: &[String]) -> String {
     let mut iter = input.iter();
 
     let numbers = parse_numbers(iter.next().unwrap().as_str());
@@ -95,7 +93,7 @@ pub fn run_b(_: i32, input: &Vec<String>) -> String {
         }
     }
 
-    format!("I shouldn't get here")
+    "I shouldn't get here".to_string()
 }
 
 fn parse_numbers(line: &str) -> Vec<i32> {
@@ -128,10 +126,8 @@ fn check_marks(marks: Vec<Vec<bool>>) -> bool {
     let rows = marks.iter()
         .any(|row| row.len() == row.iter().filter(|b| **b).count());
 
-    let columns = rows || (0..size).into_iter()
-        .any(|i| marks.iter().all(|row| row[i]));
-
-    columns
+    rows || (0..size).into_iter()
+        .any(|i| marks.iter().all(|row| row[i]))
 }
 
 #[cfg(test)]

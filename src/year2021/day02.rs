@@ -1,4 +1,4 @@
-pub fn run_a(_: i32, input: &Vec<String>) -> String {
+pub fn run_a(_: i32, input: &[String]) -> String {
     let mut horizontal = 0;
     let mut depth = 0;
 
@@ -27,7 +27,7 @@ pub fn run_a(_: i32, input: &Vec<String>) -> String {
     format!("{}", horizontal * depth)
 }
 
-pub fn run_b(_: i32, input: &Vec<String>) -> String {
+pub fn run_b(_: i32, input: &[String]) -> String {
     let mut horizontal = 0;
     let mut depth = 0;
     let mut aim = 0;

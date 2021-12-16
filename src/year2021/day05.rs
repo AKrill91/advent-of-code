@@ -20,7 +20,7 @@ impl FromStr for Point {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut iter = s.split(",");
+        let mut iter = s.split(',');
 
         Ok(
             Point {
@@ -32,7 +32,7 @@ impl FromStr for Point {
 }
 
 impl Point {
-    fn to_tuple(&self) -> (i32, i32) {
+    fn to_tuple(self) -> (i32, i32) {
         (self.x, self.y)
     }
 }
@@ -47,7 +47,7 @@ impl FromStr for Line {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut iter = s.split(" ");
+        let mut iter = s.split(' ');
         let start = iter.next().unwrap();
         iter.next();
         let end = iter.next().unwrap();
@@ -62,19 +62,6 @@ impl FromStr for Line {
 }
 
 impl Line {
-    pub fn pairs(x1: i32, y1: i32, x2: i32, y2: i32) -> Self {
-        Line {
-            start: Point {
-                x: x1,
-                y: y1,
-            },
-            end: Point {
-                x: x2,
-                y: y2,
-            },
-        }
-    }
-
     pub fn is_horizontal(&self) -> bool {
         self.start.y == self.end.y
     }
@@ -125,17 +112,17 @@ impl Line {
     }
 }
 
-pub fn run_a(_: i32, input: &Vec<String>) -> String {
+pub fn run_a(_: i32, input: &[String]) -> String {
     run(input, false)
 }
 
-pub fn run_b(_: i32, input: &Vec<String>) -> String {
+pub fn run_b(_: i32, input: &[String]) -> String {
     run(input, true)
 }
 
-pub fn run(input: &Vec<String>, diagonals: bool) -> String {
+pub fn run(input: &[String], diagonals: bool) -> String {
     let lines: Vec<Line> = input.iter()
-        .map(|line| Line::from_str(&line).unwrap())
+        .map(|line| Line::from_str(line).unwrap())
         .collect();
 
     let mut grid: HashMap<(i32, i32), i32> = HashMap::new();

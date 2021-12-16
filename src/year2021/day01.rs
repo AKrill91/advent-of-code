@@ -1,4 +1,4 @@
-pub fn run_a(_: i32, input: &Vec<String>) -> String {
+pub fn run_a(_: i32, input: &[String]) -> String {
     let mut counter = 0;
     let mut previous: Option<usize> = None;
 
@@ -17,7 +17,7 @@ pub fn run_a(_: i32, input: &Vec<String>) -> String {
     counter.to_string()
 }
 
-pub fn run_b(_: i32, input: &Vec<String>) -> String {
+pub fn run_b(_: i32, input: &[String]) -> String {
     let mut counter = 0;
     let mut iter = input.iter()
         .map(|line| line.parse::<usize>().unwrap());

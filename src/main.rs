@@ -3,25 +3,21 @@ extern crate core;
 extern crate env_logger;
 #[macro_use]
 extern crate log;
-#[macro_use]
-extern crate regex;
 
-use std::borrow::Borrow;
 use std::collections::HashMap;
-use std::fmt::Display;
 use std::time::Instant;
 
 mod advent_helper;
 mod year2021;
 
-pub type YearRun = fn(i32, &Vec<i32>) -> ();
-pub type DayRun = fn(i32, &Vec<String>) -> String;
+pub type YearRun = fn(i32, &[i32]) -> ();
+pub type DayRun = fn(i32, &[String]) -> String;
 
-fn year_run_unknown(year: i32, _: &Vec<i32>) {
+fn year_run_unknown(year: i32, _: &[i32]) {
     log::warn!("Unknown year {:04}", year);
 }
 
-pub fn day_run_unknown(day: i32, _: &Vec<String>) -> String {
+pub fn day_run_unknown(day: i32, _: &[String]) -> String {
     format!("unknown day {:02}", day)
 }
 
@@ -42,7 +38,7 @@ fn main() {
     info!("Overall - took {:?}", start.elapsed());
 }
 
-fn run_year(year: i32, days: &Vec<i32>) {
+fn run_year(year: i32, days: &[i32]) {
     let func: YearRun = match year {
         2021 => year2021::run,
         _ => year_run_unknown

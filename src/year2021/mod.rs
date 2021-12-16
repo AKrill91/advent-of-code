@@ -6,7 +6,7 @@ mod day02;
 mod day04;
 mod day05;
 
-pub fn run(year: i32, days_to_run: &Vec<i32>) {
+pub fn run(year: i32, days_to_run: &[i32]) {
     days_to_run.iter()
         .for_each(|day| run_day(year, *day));
 }
@@ -26,7 +26,7 @@ fn run_day(year: i32, day: i32) {
     let resource_file = format!("resources/{:04}/day{:02}.txt", year, day);
     let input = crate::advent_helper::read_file_lines(&resource_file);
 
-    for (letter, func) in vec![("a", funcs.0), ("b", funcs.1)] {
+    for (letter, func) in &[("a", funcs.0), ("b", funcs.1)] {
         info!("{:04}:{:02}:{} - Starting", year, day, letter);
         let letter_start = Instant::now();
         let letter_result = func(day, &input);
