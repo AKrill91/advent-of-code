@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 struct Point {
     x: i32,
     y: i32,
@@ -37,7 +37,7 @@ impl Point {
     }
 }
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 struct Line {
     start: Point,
     end: Point,
@@ -83,6 +83,10 @@ impl Line {
         self.start.x == self.end.x
     }
 
+    pub fn is_diagonal(&self) -> bool {
+        self.start.y != self.end.y && self.start.x != self.end.x
+    }
+
     pub fn points(&self) -> Vec<Point> {
         let mut out = vec![];
 
@@ -102,6 +106,19 @@ impl Line {
             for y in y_start..=y_end {
                 out.push(Point::from((x, y)));
             }
+        } else if self.is_diagonal() {
+            let x_diff = (self.end.x - self.start.x).clamp(-1, 1);
+            let y_diff = (self.end.y - self.start.y).clamp(-1, 1);
+            let num_steps = (self.end.x - self.start.x).abs();
+
+            for i in 0..=num_steps {
+                out.push(
+                    Point {
+                        x: self.start.x + (x_diff * i),
+                        y: self.start.y + (y_diff * i),
+                    }
+                )
+            }
         }
 
         out
@@ -109,6 +126,14 @@ impl Line {
 }
 
 pub fn run_a(_: i32, input: &Vec<String>) -> String {
+    run(input, false)
+}
+
+pub fn run_b(_: i32, input: &Vec<String>) -> String {
+    run(input, true)
+}
+
+pub fn run(input: &Vec<String>, diagonals: bool) -> String {
     let lines: Vec<Line> = input.iter()
         .map(|line| Line::from_str(&line).unwrap())
         .collect();
@@ -116,7 +141,7 @@ pub fn run_a(_: i32, input: &Vec<String>) -> String {
     let mut grid: HashMap<(i32, i32), i32> = HashMap::new();
 
     lines.iter()
-        .filter(|line| line.is_vertical() || line.is_horizontal())
+        .filter(|line| line.is_vertical() || line.is_horizontal() || diagonals)
         .flat_map(|line| line.points())
         .for_each(|point| {
             let tuple = point.to_tuple();
@@ -126,14 +151,10 @@ pub fn run_a(_: i32, input: &Vec<String>) -> String {
         });
 
     let count = grid.iter()
-        .filter(|(point, count)| **count >= 2)
+        .filter(|(_, count)| **count >= 2)
         .count();
 
     format!("{}", count)
-}
-
-pub fn run_b(_: i32, input: &Vec<String>) -> String {
-    format!("")
 }
 
 #[cfg(test)]
@@ -188,6 +209,13 @@ mod test {
     }
 
     #[test]
+    fn line_is_diagonal() {
+        init();
+
+        assert!(Line::pairs(0,0,1,1).is_diagonal());
+    }
+
+    #[test]
     fn line_points_horizontal() {
         init();
 
@@ -197,6 +225,36 @@ mod test {
             Point::from((0, 0)),
             Point::from((1, 0)),
             Point::from((2, 0)),
+        ];
+
+        assert_eq!(expected, line.points());
+    }
+
+    #[test]
+    fn line_points_vertical() {
+        init();
+
+        let line = Line::pairs(0, 0, 0, 2);
+
+        let expected = vec![
+            Point::from((0, 0)),
+            Point::from((0, 1)),
+            Point::from((0, 2)),
+        ];
+
+        assert_eq!(expected, line.points());
+    }
+
+    #[test]
+    fn line_points_diagonal() {
+        init();
+
+        let line = Line::pairs(0, 0, 2, 2);
+
+        let expected = vec![
+            Point::from((0, 0)),
+            Point::from((1, 1)),
+            Point::from((2, 2)),
         ];
 
         assert_eq!(expected, line.points());
@@ -216,5 +274,11 @@ mod test {
     #[test]
     fn test_sample_b() {
         init();
+
+        let input = get_sample();
+
+        let expected = "12";
+
+        assert_eq!(expected, run_b(5, &input));
     }
 }
