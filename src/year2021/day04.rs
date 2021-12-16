@@ -70,7 +70,32 @@ pub fn run_a(_: i32, input: &Vec<String>) -> String {
 }
 
 pub fn run_b(_: i32, input: &Vec<String>) -> String {
-    format!("")
+    let mut iter = input.iter();
+
+    let numbers = parse_numbers(iter.next().unwrap().as_str());
+    let mut boards = vec![];
+
+    while iter.next().is_some() {
+        boards.push(parse_board(&mut iter));
+    }
+
+    let mut marked = HashSet::new();
+
+
+    for number in numbers {
+        marked.insert(number);
+        let first = boards.first().unwrap();
+
+        if boards.len() == 1 && first.wins(&marked) {
+            info!("Last board found on number {}", number);
+
+            return format!("{}", number * first.unmarked_sum(&marked));
+        } else {
+            boards.retain(|board| !board.wins(&marked));
+        }
+    }
+
+    format!("I shouldn't get here")
 }
 
 fn parse_numbers(line: &str) -> Vec<i32> {
@@ -112,6 +137,37 @@ fn check_marks(marks: Vec<Vec<bool>>) -> bool {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    fn init() {
+        let _ = env_logger::builder().is_test(true).try_init();
+    }
+
+    fn get_sample() -> Vec<String> {
+        vec![
+            "7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1",
+            "",
+            "22 13 17 11  0",
+            "8  2 23  4 24",
+            "21  9 14 16  7",
+            "6 10  3 18  5",
+            "1 12 20 15 19",
+            "",
+            "3 15  0  2 22",
+            "9 18 13 17  5",
+            "19  8  7 25 23",
+            "20 11 10 24  4",
+            "14 21 16 12  6",
+            "",
+            "14 21 17 24  4",
+            "10 16 15  9 19",
+            "18  8 23 26 20",
+            "22 11 13  6  5",
+            "2  0 12  3  7",
+        ]
+            .into_iter()
+            .map(|s| s.to_string())
+            .collect()
+    }
 
     #[test]
     fn test_parse_numbers() {
@@ -168,33 +224,21 @@ mod test {
 
     #[test]
     fn test_sample_a() {
-        let input = vec![
-"7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1",
-"",
-"22 13 17 11  0",
- "8  2 23  4 24",
-"21  9 14 16  7",
- "6 10  3 18  5",
- "1 12 20 15 19",
-"",
- "3 15  0  2 22",
- "9 18 13 17  5",
-"19  8  7 25 23",
-"20 11 10 24  4",
-"14 21 16 12  6",
-"",
-"14 21 17 24  4",
-"10 16 15  9 19",
-"18  8 23 26 20",
-"22 11 13  6  5",
- "2  0 12  3  7",
-        ]
-            .into_iter()
-            .map(|s| s.to_string())
-            .collect();
+        init();
+        let input = get_sample();
 
         let result = run_a(4, &input);
 
         assert_eq!("4512", result.as_str());
+    }
+
+    #[test]
+    fn test_sample_b() {
+        init();
+        let input = get_sample();
+
+        let result = run_b(4, &input);
+
+        assert_eq!("1924", result.as_str());
     }
 }
