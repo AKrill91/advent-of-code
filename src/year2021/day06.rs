@@ -1,31 +1,56 @@
+use std::collections::HashMap;
 
 pub fn run_a(_: i32, input: &[String]) -> String {
-    let fishies = run_days(80, input);
-
-    format!("{}", fishies.len())
+    format!("{}", run_days(80, input))
 }
 
 pub fn run_b(_: i32, input: &[String]) -> String {
-    format!("")
+    format!("{}", run_days(256, input))
 }
 
-
-fn run_days(num_days: usize, input: &[String]) -> Vec<LanternFish> {
-    let mut fishies = LanternFish::parse_fish(&input[0]);
+fn run_days(num_days: usize, input: &[String]) -> u64  {
+    let mut fish = parse_fish(&input[0]);
 
     for _ in 0..num_days {
-        let num_to_add = fishies.iter_mut()
-            .filter_map(|f: &mut LanternFish| {
-                if f.tick() { Some(1) } else {None}
-            })
-            .count();
-
-        for _ in 0..num_to_add {
-            fishies.push(LanternFish::new());
-        }
+        fish = tick(fish);
     }
 
-    fishies
+    fish.into_iter()
+        .map(|(timer, count)| count)
+        .sum()
+}
+
+fn parse_fish(line: &str) -> HashMap<u8, u64> {
+    line.split(',')
+        .map(|s| s.parse::<u8>().unwrap())
+        .fold(HashMap::new(), |mut map, i| {
+            let entry = map.entry(i).or_insert(0);
+
+            *entry += 1;
+            map
+        })
+}
+
+fn tick(fish: HashMap<u8, u64>) -> HashMap<u8, u64> {
+    let new_fish_count = *fish.get(&0).unwrap_or(&0);
+
+    let mut out: HashMap<u8, u64> = HashMap::new();
+    out.insert(8, new_fish_count);
+
+    fish.iter()
+        .map(|(timer, count)| {
+            if *timer == 0 {
+                (6, *count)
+            } else {
+                (*timer - 1, *count)
+            }
+        })
+        .for_each(|(timer, count)| {
+            let entry = out.entry(timer).or_default();
+            *entry += count;
+        });
+
+    out
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -76,22 +101,11 @@ mod test {
 
     #[test]
     fn test_parse_fish() {
-        let expected: Vec<u8> = vec![4,3,2,1];
-        let actual: Vec<u8> = LanternFish::parse_fish("4,3,2,1")
-            .into_iter()
-            .map(|f| f.timer)
+        let expected: HashMap<u8, u64> = vec![(1,1), (2,2), (3,3), (4,4)].into_iter()
             .collect();
+        let actual = parse_fish("1,2,3,4,2,3,4,3,4,4");
 
         assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn test_fish_tick() {
-        let mut fish = LanternFish{timer: 1};
-        assert_eq!(false, fish.tick());
-        assert_eq!(0, fish.timer);
-        assert_eq!(true, fish.tick());
-        assert_eq!(6, fish.timer);
     }
 
     fn get_sample() -> Vec<String> {
@@ -119,7 +133,7 @@ mod test {
         init();
         let input = get_sample();
         let expected = "26";
-        assert_eq!(expected, run_days(18, &input).len().to_string());
+        assert_eq!(expected, run_days(18, &input).to_string());
     }
 
     #[test]
@@ -128,7 +142,7 @@ mod test {
 
         let input = get_sample();
 
-        let expected = "";
+        let expected = "26984457539";
 
         assert_eq!(expected, run_b(0, &input));
     }
