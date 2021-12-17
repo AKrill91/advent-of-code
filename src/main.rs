@@ -27,7 +27,7 @@ fn main() {
     let start = Instant::now();
 
     let run_these: HashMap<i32, Vec<i32>> = vec![
-        (2021, vec![7])
+        (2021, vec![8])
     ]
         .into_iter()
         .collect();
