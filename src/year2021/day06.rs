@@ -16,7 +16,7 @@ fn run_days(num_days: usize, input: &[String]) -> u64  {
     }
 
     fish.into_iter()
-        .map(|(timer, count)| count)
+        .map(|(_, count)| count)
         .sum()
 }
 
@@ -51,43 +51,6 @@ fn tick(fish: HashMap<u8, u64>) -> HashMap<u8, u64> {
         });
 
     out
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct LanternFish {
-    timer: u8,
-}
-
-impl From<&str> for LanternFish {
-    fn from(s: &str) -> Self {
-        LanternFish {
-            timer: s.parse::<u8>().unwrap(),
-        }
-    }
-}
-
-impl LanternFish {
-    fn new() -> Self {
-        LanternFish {
-            timer: 8
-        }
-    }
-
-    fn tick(&mut self) -> bool {
-        if self.timer == 0 {
-            self.timer = 6;
-            true
-        } else {
-            self.timer -= 1;
-            false
-        }
-    }
-
-    fn parse_fish(line: &str) -> Vec<Self> {
-        line.split(',')
-            .map(LanternFish::from)
-            .collect()
-    }
 }
 
 #[cfg(test)]

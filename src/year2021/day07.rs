@@ -1,5 +1,3 @@
-use std::cmp::min;
-
 pub fn run_a(_: i32, input: &[String]) -> String {
     let crabs = parse_crabs(&input[0]);
 
