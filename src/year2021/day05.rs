@@ -62,6 +62,20 @@ impl FromStr for Line {
 }
 
 impl Line {
+    #[allow(dead_code)]
+    pub fn pairs(x1: i32, y1: i32, x2: i32, y2: i32) -> Self {
+        Line {
+            start: Point {
+                x: x1,
+                y: y1,
+            },
+            end: Point {
+                x: x2,
+                y: y2,
+            },
+        }
+    }
+
     pub fn is_horizontal(&self) -> bool {
         self.start.y == self.end.y
     }

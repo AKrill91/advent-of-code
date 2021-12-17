@@ -1,9 +1,9 @@
 
-pub fn run_a(_: i32, input: &Vec<String>) -> String {
+pub fn run_a(_: i32, input: &[String]) -> String {
     format!("")
 }
 
-pub fn run_b(_: i32, input: &Vec<String>) -> String {
+pub fn run_b(_: i32, input: &[String]) -> String {
     format!("")
 }
 
@@ -16,7 +16,12 @@ mod test {
     }
 
     fn get_sample() -> Vec<String> {
-        vec![]
+        vec![
+            ""
+        ]
+            .into_iter()
+            .map(|s| s.to_string())
+            .collect()
     }
 
     #[test]

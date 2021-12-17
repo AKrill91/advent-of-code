@@ -5,6 +5,7 @@ mod day01;
 mod day02;
 mod day04;
 mod day05;
+mod day06;
 
 pub fn run(year: i32, days_to_run: &[i32]) {
     days_to_run.iter()
@@ -17,6 +18,7 @@ fn run_day(year: i32, day: i32) {
         2 => (day02::run_a, day02::run_b),
         4 => (day04::run_a, day04::run_b),
         5 => (day05::run_a, day05::run_b),
+        6 => (day06::run_a, day06::run_b),
         _ => (day_run_unknown, day_run_unknown)
     };
 
