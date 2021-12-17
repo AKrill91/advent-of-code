@@ -24,7 +24,30 @@ pub fn run_a(_: i32, input: &[String]) -> String {
 }
 
 pub fn run_b(_: i32, input: &[String]) -> String {
-    format!("")
+    let crabs = parse_crabs(&input[0]);
+
+    let min_position = *crabs.iter()
+        .min()
+        .unwrap();
+
+    let max_position = *crabs.iter()
+        .max()
+        .unwrap();
+
+    let mut min_fuel_cost = i32::MAX;
+
+    for pos in min_position..=max_position {
+        min_fuel_cost = min_fuel_cost.min(crabs.iter()
+            .map(|crab| {
+                let diff = (pos - crab).abs();
+
+                (diff * (diff + 1)) / 2
+            })
+            .sum()
+        );
+    }
+
+    format!("{}", min_fuel_cost)
 }
 
 fn parse_crabs(input: &str) -> Vec<i32> {
@@ -67,7 +90,7 @@ mod test {
 
         let input = get_sample();
 
-        let expected = "";
+        let expected = "168";
 
         assert_eq!(expected, run_b(0, &input));
     }
