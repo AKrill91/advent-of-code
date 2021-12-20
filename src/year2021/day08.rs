@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 const UNIQUE_SEGMENT_COUNTS: [usize;4] = [2,4,3,7];
 
@@ -18,7 +18,12 @@ pub fn run_a(_: i32, input: &[String]) -> String {
 }
 
 pub fn run_b(_: i32, input: &[String]) -> String {
-    format!("")
+    let sum: u32 = input.iter()
+        .map(|line| parse_line(line))
+        .map(|(signals, outputs)| solve(signals, outputs))
+        .sum();
+
+    format!("{}", sum)
 }
 
 fn parse_line(line: &str) -> (Vec<&str>, Vec<&str>) {
@@ -30,21 +35,108 @@ fn parse_line(line: &str) -> (Vec<&str>, Vec<&str>) {
     )
 }
 
-fn get_segment_counts() -> HashMap<u8, u8> {
-    vec![
-        (0, 6),
-        (1, 2),
-        (2, 5),
-        (3, 5),
-        (4, 4),
-        (5, 5),
-        (6, 6),
-        (7, 3),
-        (8, 7),
-        (9, 6),
-    ]
-        .into_iter()
-        .collect()
+fn solve(signals: Vec<&str>, outputs: Vec<&str>) -> u32 {
+    let mut possibilities = DisplaySegment::possibilities();
+
+    signals.iter()
+        .chain(outputs.iter())
+        .filter(|s| UNIQUE_SEGMENT_COUNTS.contains(&s.len()))
+        .for_each(|s| {
+
+        });
+
+    0
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
+enum DisplaySegment {
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+    G
+}
+
+impl DisplaySegment {
+    fn all() -> [Self;7] {
+        [
+            Self::A,
+            Self::B,
+            Self::C,
+            Self::D,
+            Self::E,
+            Self::F,
+            Self::G,
+        ]
+    }
+
+    fn possibilities() -> HashMap<Self, HashSet<char>> {
+        Self::all()
+            .iter()
+            .map(|s| (*s, vec!['a','b','c','d','e','f','g'].into_iter().collect::<HashSet<char>>()))
+            .collect()
+    }
+}
+
+enum SevenSegmentDisplay {
+    ZERO,
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    FIVE,
+    SIX,
+    SEVEN,
+    EIGHT,
+    NINE
+}
+
+impl SevenSegmentDisplay {
+    fn segments_with_count(count: usize) -> Vec<SevenSegmentDisplay> {
+        match count {
+            2 => vec![Self::ONE],
+            3 => vec![Self::SEVEN],
+            4 => vec![Self::FOUR],
+            5 => vec![Self::TWO, Self::THREE,Self::FIVE],
+            6 => vec![Self::ZERO, Self::SIX, Self::NINE],
+            7 => vec![Self::EIGHT],
+            _ => panic!()
+        }
+    }
+
+    fn segment_count(&self) -> usize {
+        match self {
+            SevenSegmentDisplay::ZERO => 6,
+            SevenSegmentDisplay::ONE => 2,
+            SevenSegmentDisplay::TWO => 5,
+            SevenSegmentDisplay::THREE => 5,
+            SevenSegmentDisplay::FOUR => 4,
+            SevenSegmentDisplay::FIVE => 5,
+            SevenSegmentDisplay::SIX => 6,
+            SevenSegmentDisplay::SEVEN => 3,
+            SevenSegmentDisplay::EIGHT => 7,
+            SevenSegmentDisplay::NINE => 6
+        }
+    }
+
+    fn segments(&self) -> HashSet<DisplaySegment> {
+        match self {
+            SevenSegmentDisplay::ZERO => vec![DisplaySegment::A,DisplaySegment::B,DisplaySegment::C,DisplaySegment::E,DisplaySegment::F,DisplaySegment::G],
+            SevenSegmentDisplay::ONE => vec![DisplaySegment::C, DisplaySegment::F],
+            SevenSegmentDisplay::TWO => vec![DisplaySegment::A,DisplaySegment::C,DisplaySegment::D,DisplaySegment::E,DisplaySegment::G],
+            SevenSegmentDisplay::THREE => vec![DisplaySegment::A,DisplaySegment::C,DisplaySegment::D,DisplaySegment::F,DisplaySegment::G],
+            SevenSegmentDisplay::FOUR => vec![DisplaySegment::B,DisplaySegment::C,DisplaySegment::D,DisplaySegment::F],
+            SevenSegmentDisplay::FIVE => vec![DisplaySegment::A,DisplaySegment::B,DisplaySegment::D,DisplaySegment::F,DisplaySegment::G],
+            SevenSegmentDisplay::SIX => vec![DisplaySegment::A,DisplaySegment::B,DisplaySegment::D,DisplaySegment::E,DisplaySegment::F,DisplaySegment::G],
+            SevenSegmentDisplay::SEVEN => vec![DisplaySegment::A,DisplaySegment::C,DisplaySegment::F],
+            SevenSegmentDisplay::EIGHT => vec![DisplaySegment::A,DisplaySegment::B,DisplaySegment::C,DisplaySegment::D,DisplaySegment::E,DisplaySegment::F,DisplaySegment::G],
+            SevenSegmentDisplay::NINE => vec![DisplaySegment::A,DisplaySegment::B,DisplaySegment::C,DisplaySegment::D,DisplaySegment::F,DisplaySegment::G]
+        }
+            .into_iter()
+            .collect()
+    }
 }
 
 #[cfg(test)]
@@ -103,7 +195,7 @@ mod test {
 
         let input = get_sample();
 
-        let expected = "";
+        let expected = "61229";
 
         assert_eq!(expected, run_b(0, &input));
     }
