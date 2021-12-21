@@ -72,7 +72,7 @@ impl<T, U> Grid<T, U>
 
                 !neighbors.iter()
                     .flat_map(|p| self.get(p))
-                    .any(|h| h < height)
+                    .any(|h| h <= height)
             })
             .map(|(point, _)| { point.clone() })
             .collect()
@@ -167,5 +167,28 @@ mod test {
         assert!(minimums.contains(&Point2 { x: 0, y: 1 }));
         assert!(minimums.contains(&Point2 { x: 2, y: 1 }));
         assert!(minimums.contains(&Point2 { x: 1, y: 2 }));
+    }
+
+    #[test]
+    fn local_minimums_equal_doesnt_count() {
+        let mut points: HashMap<Point2<i32>, i32> = vec![
+            (Point2 { x: 0, y: 0 }, 1),
+            (Point2 { x: 1, y: 0 }, 2),
+            (Point2 { x: 2, y: 0 }, 2),
+            (Point2 { x: 0, y: 1 }, 2),
+            (Point2 { x: 1, y: 1 }, 2),
+            (Point2 { x: 2, y: 1 }, 2),
+            (Point2 { x: 0, y: 2 }, 2),
+            (Point2 { x: 1, y: 2 }, 2),
+            (Point2 { x: 2, y: 2 }, 2),
+        ]
+            .into_iter()
+            .collect();
+
+        let grid = Grid::new(points);
+
+        let minimums = grid.local_minimums(false);
+
+        assert_eq!(1, minimums.len());
     }
 }

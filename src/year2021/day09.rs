@@ -5,9 +5,9 @@ pub fn run_a(_: i32, input: &[String]) -> String {
 
     let minimums = grid.local_minimums(false);
 
-    info!("Found {} local minimums: {:?}", minimums.len(), minimums);
+    info!("Found {} local minimums", minimums.len());
 
-    let min_sum: u8 = minimums.iter()
+    let min_sum: i32 = minimums.iter()
         .map(|point| grid.get(point).unwrap() + 1)
         .sum();
 
@@ -18,7 +18,7 @@ pub fn run_b(_: i32, input: &[String]) -> String {
     format!("")
 }
 
-fn parse_grid<T: AsRef<str>>(lines: &[T]) -> Grid<i32, u8> {
+fn parse_grid<T: AsRef<str>>(lines: &[T]) -> Grid<i32, i32> {
     Grid::new(
         lines.iter()
             .enumerate()
@@ -26,7 +26,7 @@ fn parse_grid<T: AsRef<str>>(lines: &[T]) -> Grid<i32, u8> {
                 line.as_ref()
                     .chars()
                     .enumerate()
-                    .map(move |(x, c)| (Point2{x: x as i32, y: y as i32},c.to_digit(10).unwrap() as u8))
+                    .map(move |(x, c)| (Point2{x: x as i32, y: y as i32},c.to_digit(10).unwrap() as i32))
             }
             )
             .collect()
@@ -47,8 +47,8 @@ mod test {
 
         assert_eq!(5, grid.height());
         assert_eq!(10, grid.width());
-        assert_eq!(0u8, *grid.get(&(9, 0).into()).unwrap());
-        assert_eq!(5u8, *grid.get(&(2, 2).into()).unwrap());
+        assert_eq!(0, *grid.get(&(9, 0).into()).unwrap());
+        assert_eq!(5, *grid.get(&(2, 2).into()).unwrap());
     }
 
     fn get_sample() -> Vec<String> {
