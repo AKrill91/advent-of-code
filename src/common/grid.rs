@@ -11,6 +11,13 @@ pub struct Grid<T, U> {
     width: T,
 }
 
+impl<T, U> Grid<T, U> {
+    pub fn points_mut(&mut self) -> &mut HashMap<Point2<T>, U> {
+        &mut self.points
+    }
+}
+
+
 impl<T, U> Grid<T, U>
     where T: Hash + Eq + num_traits::PrimInt,
           U: PartialOrd {
@@ -95,6 +102,23 @@ impl<T, U> Grid<T, U>
     }
     pub fn width(&self) -> T {
         self.width
+    }
+}
+
+impl Grid<Point2<i32>, i32> {
+    pub fn parse_simple_input<T: AsRef<str>>(input: &[T]) -> Grid<i32, i32> {
+        Grid::new(
+            input.iter()
+                .enumerate()
+                .flat_map(|(y, line)| {
+                    line.as_ref()
+                        .chars()
+                        .enumerate()
+                        .map(move |(x, c)| (Point2{x: x as i32, y: y as i32},c.to_digit(10).unwrap() as i32))
+                }
+                )
+                .collect()
+        )
     }
 }
 
