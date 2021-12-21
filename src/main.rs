@@ -9,6 +9,7 @@ use std::time::Instant;
 
 mod advent_helper;
 mod year2021;
+mod common;
 
 pub type YearRun = fn(i32, &[i32]) -> ();
 pub type DayRun = fn(i32, &[String]) -> String;
@@ -27,7 +28,7 @@ fn main() {
     let start = Instant::now();
 
     let run_these: HashMap<i32, Vec<i32>> = vec![
-        (2021, vec![8])
+        (2021, vec![9])
     ]
         .into_iter()
         .collect();
