@@ -10,3 +10,6 @@ target
 Cargo.lock
 
 resources
+
+.terraform.lock.hcl
+.terraform
