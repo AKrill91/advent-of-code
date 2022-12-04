@@ -1,5 +1,5 @@
 data "local_file" "day01_input" {
-  filename = "${path.module}/../../resources/2022/day01.txt"
+  filename = "${path.module}/../../../resources/2022/day01.txt"
 }
 
 locals {
@@ -29,14 +29,6 @@ locals {
     for n in reverse(sort(local.elf_calorie_sums_padded)):
       tonumber(n)
   ]
-}
-
-output "debug" {
-  value = {
-#    calorie_groups = local.calorie_groups
-#    elf_calories_str = local.elf_calories_str
-    slice = slice(local.elf_calorie_sums_sorted, 0, 3)
-  }
 }
 
 output "day01" {
