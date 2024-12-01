@@ -5,8 +5,5 @@ version = "0.1.0"
 authors = ["Austin Krill <akrill91@gmail.com>"]
 
 [dependencies]
-chrono =  "0.4"
 env_logger = "0.9"
 log = "0.4"
-num-traits = "0.2"
-regex = "1.5"
