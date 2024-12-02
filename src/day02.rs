@@ -11,6 +11,19 @@ pub fn run_a(input: &str) -> i64 {
         .count() as i64
 }
 
+pub fn run_b(input: &str) -> i64 {
+    let input = input.trim();
+
+    input.lines()
+        .map(|line| {
+            line.split(' ')
+                .map(|s| s.parse::<i64>().unwrap())
+                .collect::<Vec<i64>>()
+        })
+        .filter(|levels| is_safe(levels) || is_safe_with_dampener(&levels))
+        .count() as i64
+}
+
 fn is_safe(levels: &[i64]) -> bool {
     let mut increasing = None;
 
@@ -38,6 +51,21 @@ fn is_safe(levels: &[i64]) -> bool {
         }
     }
     true
+}
+
+
+fn is_safe_with_dampener(levels: &[i64]) -> bool {
+    for i in 0..levels.len() {
+        let cloned: Vec<i64> = levels.iter().enumerate()
+            .filter(|(index, _)| *index != i)
+            .map(|(_, val)| *val)
+            .collect();
+
+        if is_safe(&cloned) {
+            return true;
+        }
+    }
+    false
 }
 
 #[cfg(test)]
@@ -87,5 +115,10 @@ mod test {
     #[test]
     fn part_a_example() {
         assert_eq!(2, super::run_a(input()))
+    }
+
+    #[test]
+    fn part_b_example() {
+        assert_eq!(4, super::run_b(input()))
     }
 }
