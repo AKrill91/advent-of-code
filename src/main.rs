@@ -1,4 +1,4 @@
-mod day04;
+mod day05;
 mod utils;
 
 use std::time::Instant;
@@ -9,12 +9,12 @@ fn main() {
 
     let start = Instant::now();
 
-    let day04_input = std::fs::read_to_string("resources/2024/day04.txt").unwrap();
+    let day05_input = std::fs::read_to_string("resources/2024/day05.txt").unwrap();
 
-    let day04_a = day04::run_a(&day04_input);
-    info!("Day 02 part a = {}", day04_a);
-    let day04_b = day04::run_b(&day04_input);
-    info!("Day 02 part b = {}", day04_b);
+    let day05_a = day05::run_a(&day05_input);
+    info!("Day 02 part a = {}", day05_a);
+    let day05_b = day05::run_b(&day05_input);
+    info!("Day 02 part b = {}", day05_b);
 
     info!("Overall - took {:?}", start.elapsed());
 }
