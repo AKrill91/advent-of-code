@@ -1,4 +1,4 @@
-mod day05;
+mod day06;
 mod utils;
 
 use std::time::Instant;
@@ -8,13 +8,15 @@ fn main() {
     env_logger::init();
 
     let start = Instant::now();
+    let day06_input = std::fs::read_to_string("resources/2024/day06.txt").unwrap();
 
-    let day05_input = std::fs::read_to_string("resources/2024/day05.txt").unwrap();
+    let a_start = Instant::now();
+    let day06_a = day06::run_a(&day06_input);
+    info!("Day 06 part a = {}, took {:?}", day06_a, a_start.elapsed());
 
-    let day05_a = day05::run_a(&day05_input);
-    info!("Day 02 part a = {}", day05_a);
-    let day05_b = day05::run_b(&day05_input);
-    info!("Day 02 part b = {}", day05_b);
+    let b_start = Instant::now();
+    let day06_b = day06::run_b(&day06_input);
+    info!("Day 06 part b = {}, took {:?}", day06_b, b_start.elapsed());
 
     info!("Overall - took {:?}", start.elapsed());
 }

@@ -3,7 +3,7 @@ use crate::utils::point::Point;
 pub mod grid;
 pub mod point;
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum Direction {
     North,
     Northeast,
@@ -52,6 +52,19 @@ impl Direction {
             Direction::East | Direction::West => VERTICALS,
             Direction::Northeast | Direction::Southwest => SE_NW,
             Direction::Southeast | Direction::Northwest => NE_SW
+        }
+    }
+
+    pub fn clockwise_90(self) -> Direction {
+        match self {
+            Direction::North => Direction::East,
+            Direction::Northeast => Direction::Southeast,
+            Direction::East => Direction::South,
+            Direction::Southeast => Direction::Southwest,
+            Direction::South => Direction::West,
+            Direction::Southwest => Direction::Northwest,
+            Direction::West => Direction::North,
+            Direction::Northwest => Direction::Northeast
         }
     }
 }

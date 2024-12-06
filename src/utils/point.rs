@@ -1,7 +1,7 @@
-use std::ops::Add;
+use std::ops::{Add, AddAssign};
 use crate::utils::Direction;
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
 pub struct Point<T> {
     pub x: T,
     pub y: T
@@ -21,6 +21,13 @@ impl <T> Add for Point<T> where T: Add<Output = T> + Copy {
             x: self.x + rhs.x,
             y: self.y + rhs.y
         }
+    }
+}
+
+impl <T> AddAssign for Point<T> where T: Add<Output = T> + Copy {
+    fn add_assign(&mut self, rhs: Self) {
+        self.x = self.x + rhs.x;
+        self.y = self.y + rhs.y;
     }
 }
 
