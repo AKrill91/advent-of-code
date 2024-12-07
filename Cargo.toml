@@ -5,6 +5,7 @@ version = "0.1.0"
 authors = ["Austin Krill <akrill91@gmail.com>"]
 
 [dependencies]
-env_logger = "0.11.5"
+env_logger = "0.11"
+itertools = "0.13"
 log = "0.4"
-regex = "1.11.1"
+regex = "1.11"
