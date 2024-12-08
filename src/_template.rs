@@ -1,4 +1,7 @@
 
+fn parse(input: &str) -> i64 {
+    0
+}
 pub fn run_a(input: &str) -> i64 {
     0
 }
@@ -9,6 +12,8 @@ pub fn run_b(input: &str) -> i64 {
 
 #[cfg(test)]
 mod test {
+    use std::intrinsics::assume;
+
     fn init() {
         let _ = env_logger::builder().is_test(true).try_init();
     }
@@ -17,6 +22,11 @@ mod test {
         r""
     }
 
+    #[test]
+    fn parse() {
+        init();
+        let parsed = super::parse(example());
+    }
 
     #[test]
     fn part_a_example() {
@@ -26,6 +36,7 @@ mod test {
 
     #[test]
     fn part_b_example() {
+        init();
         assert_eq!(1, super::run_b(example()));
     }
 }

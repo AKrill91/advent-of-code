@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign};
+use std::ops::{Add, AddAssign, Sub, SubAssign};
 use crate::utils::Direction;
 
 #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
@@ -24,10 +24,28 @@ impl <T> Add for Point<T> where T: Add<Output = T> + Copy {
     }
 }
 
+impl <T> Sub for Point<T> where T: Sub<Output = T> + Copy {
+    type Output = Point<T>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Point {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y
+        }
+    }
+}
+
 impl <T> AddAssign for Point<T> where T: Add<Output = T> + Copy {
     fn add_assign(&mut self, rhs: Self) {
         self.x = self.x + rhs.x;
         self.y = self.y + rhs.y;
+    }
+}
+
+impl <T> SubAssign for Point<T> where T: Sub<Output = T> + Copy {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.x = self.x - rhs.x;
+        self.y = self.y - rhs.y;
     }
 }
 
