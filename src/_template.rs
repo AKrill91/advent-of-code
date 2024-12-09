@@ -12,7 +12,6 @@ pub fn run_b(input: &str) -> i64 {
 
 #[cfg(test)]
 mod test {
-    use std::intrinsics::assume;
 
     fn init() {
         let _ = env_logger::builder().is_test(true).try_init();
