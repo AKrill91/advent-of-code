@@ -2,7 +2,7 @@ use crate::utils::point::Point;
 use std::borrow::Borrow;
 use std::fmt::{Debug, Display, Formatter};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Grid<T> {
     rows: Vec<Vec<T>>,
 }
@@ -77,6 +77,10 @@ where T: Debug, {
 
     pub fn width(&self) -> usize {
         self.rows.first().map(|row| row.len()).unwrap_or(0)
+    }
+
+    pub fn row(&self, row: usize) -> Option<&Vec<T>> {
+        self.rows.get(row)
     }
 
     pub fn get<U: Copy + Into<i32>, V: Borrow<Point<U>>>(&self, position: V) -> Option<&T> {
