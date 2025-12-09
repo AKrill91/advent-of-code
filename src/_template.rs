@@ -25,7 +25,7 @@ mod test {
     #[test]
     fn parse() {
         init();
-        let parsed = parse(example());
+        let parsed = super::parse(example());
     }
 
     #[test]
