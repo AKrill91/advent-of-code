@@ -1,9 +1,9 @@
 use std::convert::TryFrom;
+use tokio::task::JoinSet;
 
 #[derive(Debug)]
 struct Machine {
     desired_indicators: Vec<bool>,
-    current_indicators: Vec<bool>,
     buttons: Vec<Vec<usize>>,
     joltage_requirements: Vec<i64>,
 }
@@ -17,22 +17,23 @@ impl TryFrom<&str> for Machine {
         let parts = value.split(' ')
             .collect::<Vec<&str>>();
 
-        let (desired_indicators, current_indicators) = try_parse_indicators(parts[0])?;
+        let desired_indicators = try_parse_indicators(parts[0])?;
 
         let buttons = try_parse_buttons(&parts[1..parts.len()-1])?;
 
         let joltage_requirements = try_parse_joltage(parts[parts.len() - 1])?;
 
+        let num_joltage = joltage_requirements.len();
+
         Ok(Machine {
             desired_indicators,
-            current_indicators,
             buttons,
             joltage_requirements,
         })
     }
 }
 
-fn try_parse_indicators(input: &str) -> Result<(Vec<bool>, Vec<bool>), String> {
+fn try_parse_indicators(input: &str) -> Result<Vec<bool>, String> {
     let mut out = Vec::new();
 
     for c in input.chars() {
@@ -44,9 +45,7 @@ fn try_parse_indicators(input: &str) -> Result<(Vec<bool>, Vec<bool>), String> {
         }
     }
 
-    let len = out.len();
-
-    Ok((out, vec![false; len]))
+    Ok(out)
 }
 
 fn try_parse_buttons(input: &[&str]) -> Result<Vec<Vec<usize>>, String> {
@@ -79,7 +78,8 @@ fn try_parse_joltage(input: &str) -> Result<Vec<i64>, String> {
 
 impl Machine {
     fn minimum_presses_needed(&self) -> i64 {
-        let mut next_round = vec![self.current_indicators.clone()];
+        let starting_state = vec![false; self.desired_indicators.len()];
+        let mut next_round = vec![starting_state];
         let mut press_count = 0;
 
         loop {
@@ -102,6 +102,61 @@ impl Machine {
 
         }
     }
+
+    async fn minimum_joltage_presses_needed(&self) -> i64 {
+        let starting_state = vec![0; self.joltage_requirements.len()];
+        let mut next_round = vec![starting_state];
+        let mut press_count = 0;
+        let start = std::time::Instant::now();
+
+        loop {
+            let now = std::time::Instant::now();
+
+            if now.duration_since(start) > std::time::Duration::from_secs(60) {
+                log::warn!("Computation taking a long time: {} seconds elapsed, currently at round {} with {} states to explore", now.duration_since(start).as_secs(), press_count, next_round.len());
+                return 0;
+            }
+            press_count += 1;
+            log::debug!("Round {}, {} states to explore", press_count, next_round.len());
+            let this_round = next_round.clone();
+            next_round.clear();
+
+            let mut joinset = JoinSet::new();
+
+            for state in this_round {
+                for button in &self.buttons {
+                    let s = state.clone();
+                    let b = button.clone();
+                    joinset.spawn_blocking(move || {
+                        press_joltage(&s, &b)
+                    });
+                }
+            }
+
+            log::debug!("Waiting for {} tasks to complete", joinset.len());
+
+            let new_states = joinset.join_all().await;
+
+            let mut num_rejected = 0;
+
+            'state_loop: for state in new_states {
+                if state.eq(&self.joltage_requirements) {
+                    return press_count;
+                } else {
+                    for i in 0..state.len() {
+                        if state[i] > self.joltage_requirements[i] {
+                            num_rejected += 1;
+                            continue 'state_loop;
+                        }
+                    }
+
+                    next_round.push(state);
+                }
+            }
+
+            log::debug!("{} states rejected for exceeding joltage requirements", num_rejected);
+        }
+    }
 }
 
 fn press_button(indicators: &Vec<bool>, button: &Vec<usize>) -> Vec<bool> {
@@ -109,6 +164,16 @@ fn press_button(indicators: &Vec<bool>, button: &Vec<usize>) -> Vec<bool> {
 
     for &index in button {
         out[index] = !out[index];
+    }
+
+    out
+}
+
+fn press_joltage(joltages: &Vec<i64>, button: &Vec<usize>) -> Vec<i64> {
+    let mut out = joltages.clone();
+
+    for &index in button {
+        out[index] += 1;
     }
 
     out
@@ -130,7 +195,20 @@ pub async fn run_a(input: &str) -> i64 {
 }
 
 pub async fn run_b(input: &str) -> i64 {
-    0
+
+    let machines = parse(input);
+
+    let mut joinset = JoinSet::new();
+
+    for machine in machines {
+        joinset.spawn(async move {
+            machine.minimum_joltage_presses_needed().await
+        });
+    }
+
+    joinset.join_all().await
+        .into_iter()
+        .sum()
 }
 
 #[cfg(test)]
@@ -166,11 +244,12 @@ mod test {
     #[tokio::test]
     async fn part_b_example() {
         init();
-        assert_eq!(1, run_b(example()).await);
+        assert_eq!(33, run_b(example()).await);
     }
 
     #[test]
     fn press_button() {
+        init();
         assert_eq!(super::press_button(&vec![false, false, false], &vec![0]), vec![true, false, false]);
         assert_eq!(super::press_button(&vec![false, false, false], &vec![0, 2]), vec![true, false, true]);
         assert_eq!(super::press_button(&vec![true, false, true], &vec![0, 1]), vec![false, true, true]);
@@ -181,10 +260,10 @@ mod test {
 
         #[test]
         fn parse() {
+            init();
             let machines = super::super::parse(example().trim().lines().nth(0).unwrap());
             let machine = &machines[0];
 
-            assert_eq!(machine.current_indicators, vec![false, false, false, false]);
             assert_eq!(machine.desired_indicators, vec![false, true, true, false]);
             assert_eq!(machine.buttons, vec![vec![3], vec![1, 3], vec![2], vec![2, 3], vec![0, 2], vec![0, 1]]);
             assert_eq!(machine.joltage_requirements, vec![3, 5, 4, 7]);
@@ -192,14 +271,15 @@ mod test {
 
         #[test]
         fn try_parse_indicators() {
-            let (indicators, current) = super::try_parse_indicators("[.#..#]").unwrap();
+            init();
+            let indicators = super::try_parse_indicators("[.#..#]").unwrap();
 
             assert_eq!(indicators, vec![false, true, false, false, true]);
-            assert_eq!(current, vec![false, false, false, false, false]);
         }
 
         #[test]
         fn try_parse_buttons() {
+            init();
             let buttons = super::try_parse_buttons(&vec!["(3)", "(1,3)", "(2)"]).unwrap();
 
             assert_eq!(buttons, vec![vec![3], vec![1, 3], vec![2]]);
@@ -207,6 +287,7 @@ mod test {
 
         #[test]
         fn try_parse_joltage() {
+            init();
             let joltage = super::try_parse_joltage("{3,5,4,7}").unwrap();
 
             assert_eq!(joltage, vec![3, 5, 4, 7]);
@@ -214,11 +295,22 @@ mod test {
 
         #[test]
         fn minimum_presses_needed() {
+            init();
             let machines = super::super::parse(example());
 
             assert_eq!(machines[0].minimum_presses_needed(), 2);
             assert_eq!(machines[1].minimum_presses_needed(), 3);
             assert_eq!(machines[2].minimum_presses_needed(), 2);
+        }
+
+        #[tokio::test]
+        async fn minimum_joltage_presses_needed() {
+            init();
+            let machines = super::super::parse(example());
+
+            assert_eq!(machines[0].minimum_joltage_presses_needed().await, 10);
+            assert_eq!(machines[1].minimum_joltage_presses_needed().await, 12);
+            assert_eq!(machines[2].minimum_joltage_presses_needed().await, 11);
         }
     }
 }
