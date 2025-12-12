@@ -2,6 +2,7 @@
 fn parse(input: &str) -> i64 {
     0
 }
+
 pub fn run_a(input: &str) -> i64 {
     0
 }
