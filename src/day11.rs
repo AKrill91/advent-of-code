@@ -1,6 +1,7 @@
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::convert::TryFrom;
-use petgraph::graph::NodeIndex;
+use petgraph::graph::{Node, NodeIndex};
 
 struct IndexedGraph {
     graph: petgraph::Graph<String, ()>,
@@ -9,6 +10,10 @@ struct IndexedGraph {
 }
 
 impl IndexedGraph {
+    fn index(&self, node: &str) -> NodeIndex {
+        self.indexes[node]
+    }
+
     fn has_edge(&self, from: &str, to: &str) -> bool {
         let from_index = match self.indexes.get(from) {
             Some(index) => index,
@@ -30,6 +35,15 @@ impl IndexedGraph {
             .map(|n| self.inverse_indexes.get(&n).unwrap())
             .map(|s| s.as_str())
             .collect()
+    }
+
+    fn children_indexes(&self, index: NodeIndex) -> Vec<NodeIndex> {
+        self.graph.neighbors(index)
+            .collect()
+    }
+
+    fn name(&self, index: NodeIndex) -> &str {
+        self.inverse_indexes.get(&index).unwrap()
     }
 }
 
@@ -54,15 +68,15 @@ impl ServerRack {
     }
 
     fn ways_from_to<'a, 'b>(&'a self, start: &'a str, end: &'a str, cache: &'b mut HashMap<&'a str, usize>) -> usize {
-        log::debug!("Finding number of ways to {}", end);
+        log::trace!("Finding number of ways to {}", end);
         if start == end {
-            log::debug!("    Reached end");
+            log::trace!("    Reached end");
             return 1;
         }
 
 
         if let Some(cached) = cache.get(end) {
-            log::debug!("   {} cached: {}", end, cached);
+            log::trace!("   {} cached: {}", end, cached);
             return *cached;
         }
 
@@ -75,8 +89,33 @@ impl ServerRack {
         }
 
         cache.insert(end, num_ways);
-        log::debug!("   {} computed: {}", end, num_ways);
+        log::trace!("   {} computed: {}", end, num_ways);
         num_ways
+    }
+
+    fn paths_out(&self) -> usize {
+        let dac_to_fft = self.ways_from_to("dac", "fft", &mut HashMap::new());
+        let fft_to_dac = self.ways_from_to("fft", "dac", &mut HashMap::new());
+
+        assert!(dac_to_fft + fft_to_dac > 0);
+        assert!(dac_to_fft == 0 || fft_to_dac == 0);
+
+        let (order, count) = if dac_to_fft > 0 {
+            (["svr", "dac", "fft", "out"], dac_to_fft)
+        } else {
+            (["svr", "fft", "dac", "out"], fft_to_dac)
+        };
+
+        log::debug!("Order: {:?}", order);
+
+        let first_hop = self.ways_from_to(order[0], order[1], &mut HashMap::new());
+        let last_hop = self.ways_from_to(order[2], order[3], &mut HashMap::new());
+
+        log::debug!("{} ways from {} to {}", first_hop, order[0], order[1]);
+        log::debug!("{} ways from {} to {}", count, order[1], order[2]);
+        log::debug!("{} ways from {} to {}", last_hop, order[2], order[3]);
+
+        first_hop * count * last_hop
     }
 }
 
@@ -140,7 +179,7 @@ fn connect(mut devices: Vec<Device>) -> ServerRack {
     while let Some(device) = devices.pop() {
         let index = indexes.get(&device.name).unwrap();
         for output in device.outputs {
-            log::debug!("Connecting {} -> {}", device.name, output);
+            log::trace!("Connecting {} -> {}", device.name, output);
             let output_index = indexes.get(&output).unwrap();
             graph.add_edge(*index, *output_index, ());
             reverse.add_edge(*output_index, *index, ());
@@ -172,7 +211,7 @@ pub async fn run_a(input: &str) -> i64 {
 }
 
 pub async fn run_b(input: &str) -> i64 {
-    0
+    parse(input).paths_out() as i64
 }
 
 #[cfg(test)]
@@ -198,6 +237,24 @@ iii: out
 "
     }
 
+    fn example_b() -> &'static str {
+        r"
+svr: aaa bbb
+aaa: fft
+fft: ccc
+bbb: tty
+tty: ccc
+ccc: ddd eee
+ddd: hub
+hub: fff
+eee: dac
+dac: fff
+fff: ggg hhh
+ggg: out
+hhh: out
+"
+    }
+
     #[test]
     fn parse() {
         init();
@@ -217,7 +274,7 @@ iii: out
     #[tokio::test]
     async fn part_b_example() {
         init();
-        assert_eq!(1, run_b(example()).await);
+        assert_eq!(2, run_b(example_b()).await);
     }
 
     mod device {
