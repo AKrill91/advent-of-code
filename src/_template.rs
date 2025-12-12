@@ -3,11 +3,11 @@ fn parse(input: &str) -> i64 {
     0
 }
 
-pub fn run_a(input: &str) -> i64 {
+pub async fn run_a(input: &str) -> i64 {
     0
 }
 
-pub fn run_b(input: &str) -> i64 {
+pub async fn run_b(input: &str) -> i64 {
     0
 }
 
@@ -29,15 +29,15 @@ mod test {
         let parsed = super::parse(example());
     }
 
-    #[test]
-    fn part_a_example() {
+    #[tokio::test]
+    async fn part_a_example() {
         init();
-        assert_eq!(1, run_a(example()));
+        assert_eq!(1, run_a(example()).await);
     }
 
-    #[test]
-    fn part_b_example() {
+    #[tokio::test]
+    async fn part_b_example() {
         init();
-        assert_eq!(1, run_b(example()));
+        assert_eq!(1, run_b(example()).await);
     }
 }
